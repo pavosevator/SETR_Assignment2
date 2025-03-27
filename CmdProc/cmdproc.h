@@ -75,9 +75,15 @@ void getTxBuffer(unsigned char * buf, int * len);
 /* ************************************************ */ 
 int calcChecksum(unsigned char * buf, int nbytes);
 
-/* ********************************************************* */
-/* Computes the pseudorandom value to emulate sensor reading */
-/* ********************************************************* */ 
-signed int pseudorandom(int min, int max) 
+int addInHistory(void *measuredValue, char sensorType);
 
+/* ********************************************************* */
+/* Computes the psrnd value to emulate sensor reading */
+/* ********************************************************* */ 
+int psrnd(signed int min, signed int max);
+
+/* **************************************** */
+/* Converts value in int form to char array */
+/* **************************************** */ 
+char *generateCharArray(int value);
 #endif

@@ -20,6 +20,10 @@ static unsigned char tHistoryLen = 0;
 static unsigned char hHistoryLen = 0;
 static unsigned char cHistoryLen = 0;
 
+/* Measured values: temperature [-50, 60] °C, humidity [0,100] %, C02 [400-20k] ppm*/
+static signed char temp;
+static unsigned char hum;
+static unsigned int co2;
 /* Define seed for use of pseudo random value generator */
 static unsigned int seed = 1;
 
@@ -33,11 +37,6 @@ int cmdProcessor(void)
 	int i;
 	unsigned char sid;
 
-	/* Measured values: temperature [-50, 60] °C, humidity [0,100] %, C02 [400-20k] ppm*/
-	signed char temp;
-	unsigned char hum;
-	unsigned int co2;
-		
 	/* Detect empty cmd string */
 	if(rxBufLen == 0)
 		return -1; 
@@ -68,21 +67,22 @@ int cmdProcessor(void)
 
 				/* Sending of the data */
 				/* Emulate pseudo random generation of sensor outputs */
-				temp = (signed char)pseudorandom(-50,60);
-				hum = (unsigned char)pseudorandom(0,100);
-				co2 = (unsigned int)pseudorandom(400,20000);
+				temp = (signed char)psrnd(-50,60);
+				hum = (unsigned char)psrnd(0,100);
+				co2 = (unsigned int)psrnd(400,20000);
 
 				/* Store read values in history */
-				addTHistory(temp, tHistory, &tHistoryLen);
-				addHHistory(hum, hHistory, &hHistoryLen);
-				addCHistory(co2, cHistory, &cHistoryLen);
+				addInHistory(&temp, 't');
+				addInHistory(&hum, 'h');
+				addInHistory(&co2, 'c');
 				
 				/* Convert values to char */
-				
-
+				char *tempChar = generateCharArray(temp);
+				char *humChar = generateCharArray(hum);
+				char *co2Char = generateCharArray(co2);
 
 				/* Use txChar func() */
-
+				
 
 			case 'P':		
 				/* Command "P" detected.							*/
@@ -142,22 +142,22 @@ int cmdProcessor(void)
 /*
 	Separate function for adding values in history
 */
-void addInHistory(void *measuredValue, char sensorType) {
+int addInHistory(void *measuredValue, char sensorType) {
 	switch (sensorType) {
         case 't': // Temperature
             tHistory[tHistoryLen] = *(signed char *)measuredValue; // Cast to signed char
             tHistoryLen = (tHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
-            break;
+            return 0;
 
         case 'h': // Humidity
             hHistory[hHistoryLen] = *(unsigned char *)measuredValue; // Cast to unsigned char
             hHistoryLen = (hHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
-            break;
+            return 0;
 
         case 'c': // CO2
             cHistory[cHistoryLen] = *(unsigned int *)measuredValue; // Cast to unsigned int
             cHistoryLen = (cHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
-            break;
+            return 0;
 
         default:
             // Invalid sensor type
@@ -241,7 +241,8 @@ void getTxBuffer(unsigned char * buf, int * len)
 }
 
 // Pseudo number generator: Linear Congruential Generator
-signed int pseudorandom(int min, int max) {
+int psrnd(int min,int max) 
+{
     seed = (25173 * seed + 13849) % 65536; // xn = (a * xn-1 + c) % m, m = 2^16, 
     
 	// Scale the result to the desired range
@@ -252,4 +253,24 @@ signed int pseudorandom(int min, int max) {
 
 }
 
+char *generateCharArray(int value) {
+    static char result[6]; // Static array, 6 since that the maximum number of digits in this scenario (5 digits + \0)
+    int i = 0;
+	char temp;
 
+    // Convert value to string
+    while (value > 0) {
+        result[i++] = (value % 10) + '0'; // Convert digit to char
+        value /= 10;
+    }
+    result[i] = '\0'; // Null-terminate the string
+
+    // Reverse the string
+    for (int j = 0; j < i / 2; j++) {
+        temp = result[j];
+        result[j] = result[i - j - 1];
+        result[i - j - 1] = temp;
+    }
+
+    return result;
+}
