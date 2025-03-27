@@ -1,0 +1,6 @@
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CMakeFiles/cmdproc.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CMakeFiles/edit_cache.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CMakeFiles/rebuild_cache.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CmdProc/CMakeFiles/CmdProcLib.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CmdProc/CMakeFiles/edit_cache.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CmdProc/CMakeFiles/rebuild_cache.dir
