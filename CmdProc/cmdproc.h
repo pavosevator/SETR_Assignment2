@@ -85,5 +85,5 @@ int psrnd(signed int min, signed int max);
 /* **************************************** */
 /* Converts value in int form to char array */
 /* **************************************** */ 
-char *generateCharArray(int value);
+char *generateCharArray(int value, char temp_flag);
 #endif

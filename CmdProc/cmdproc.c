@@ -77,13 +77,11 @@ int cmdProcessor(void)
 				addInHistory(&co2, 'c');
 				
 				/* Convert values to char */
-				char *tempChar = generateCharArray(temp);
-				char *humChar = generateCharArray(hum);
-				char *co2Char = generateCharArray(co2);
+				char *tempChar = generateCharArray(temp, 1);
+				char *humChar = generateCharArray(hum, 0);
+				char *co2Char = generateCharArray(co2, 0);
 
 				/* Use txChar func() */
-				
-
 			case 'P':		
 				/* Command "P" detected.							*/
 				/* Follows one DATA byte that specifies the sensor	*/ 
@@ -205,9 +203,10 @@ int txChar(unsigned char car)
 		UARTTxBuffer[txBufLen] = car;
 		txBufLen += 1;
 		return 0;		
-	}	
-	/* If cmd string full return error */
-	return -1;
+	} else {
+		/* If cmd string full return error */
+		return -1;
+	} 
 }
 
 /*
@@ -253,23 +252,34 @@ int psrnd(int min,int max)
 
 }
 
-char *generateCharArray(int value) {
-    static char result[6]; // Static array, 6 since that the maximum number of digits in this scenario (5 digits + \0)
+char *generateCharArray(int value, char temp_flag) {
+    static char result[7]; // Static array, 6 since that the maximum number of digits in this scenario (5 digits + \0)
     int i = 0;
 	char temp;
+	char sign;
 
-    // Convert value to string
-    while (value > 0) {
-        result[i++] = (value % 10) + '0'; // Convert digit to char
-        value /= 10;
+	if(temp_flag){
+		if(value < 0){
+			sign = '-';
+			value = -value;
+		} else {
+			sign = '+';
+		}
+		result[i++] = sign;
+	}
+	
+
+    // Convert the value to a string 
+    int divisor = 1;
+    while (value / divisor >= 10) {
+        divisor *= 10; // Find the largest divisor
     }
-    result[i] = '\0'; // Null-terminate the string
 
-    // Reverse the string
-    for (int j = 0; j < i / 2; j++) {
-        temp = result[j];
-        result[j] = result[i - j - 1];
-        result[i - j - 1] = temp;
+    while (divisor > 0) {
+        int digit = value / divisor; // Extract the most significant digit
+        result[i++] = digit + '0';   // Convert digit to character
+        value %= divisor;           // Remove the most significant digit
+        divisor /= 10;              // Move to the next digit
     }
 
     return result;
