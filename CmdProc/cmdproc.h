@@ -24,6 +24,27 @@
 #define SOF_SYM '#'	        /* Start of Frame Symbol */
 #define EOF_SYM '!'          /* End of Frame Symbol */
 
+/* Defines return values */
+#define CMD_OK 0
+#define CMD_EMPTY_STRING -1
+#define CMD_INCOMPLETE -2
+#define CMD_INVALID -3
+#define CMD_CS_ERROR -4
+#define CMD_FORMAT_ERROR -5
+#define CMD_BUFFER_FULL -6
+#define CMD_BUFFER_EMPTY -7
+
+/* State machine states*/
+typedef enum{
+    UART_STATE_IDLE,
+    UART_STATE_BUSY,
+    UART_STATE_DATA_READY,
+    UART_STATE_RECEIVING,
+    UART_STATE_TRANSMITING,
+    UART_STATE_COMPLETE,
+    UART_STATE_ERROR
+} UART_State_t;
+
 /* Function prototypes */
 
 /* ************************************************************ */
@@ -36,6 +57,11 @@
 /* 		-4: if string format is wrong                           */
 /* ************************************************************ */
 int cmdProcessor(void);
+
+/* ************************************************************ */
+/* Checks if data in the Rx buffer is valid             		*/
+/* ************************************************************ */
+int checkRxDataReady(void);
 
 /* ******************************** */
 /* Adds a char to the RX buffer 	*/
@@ -75,15 +101,19 @@ void getTxBuffer(unsigned char * buf, int * len);
 /* ************************************************ */ 
 int calcChecksum(unsigned char * buf, int nbytes);
 
+/* ************************************************ */
+/* Adds given values to dedicated history buffer    */
+/* ************************************************ */ 
 int addInHistory(void *measuredValue, char sensorType);
 
-/* ********************************************************* */
+/* ************************************************** */
 /* Computes the psrnd value to emulate sensor reading */
-/* ********************************************************* */ 
+/* ************************************************** */ 
 int psrnd(signed int min, signed int max);
 
 /* **************************************** */
 /* Converts value in int form to char array */
 /* **************************************** */ 
-char *generateCharArray(int value, char temp_flag);
+char *generateCharArray(char flag, int value);
+
 #endif

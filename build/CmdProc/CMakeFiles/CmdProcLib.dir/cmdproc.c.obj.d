@@ -14,4 +14,5 @@ CmdProc/CMakeFiles/CmdProcLib.dir/cmdproc.c.obj: \
  C:/mingw64/x86_64-w64-mingw32/include/string.h \
  C:/mingw64/x86_64-w64-mingw32/include/crtdefs.h \
  C:/mingw64/x86_64-w64-mingw32/include/sec_api/string_s.h \
+ C:/mingw64/x86_64-w64-mingw32/include/math.h \
  C:\5g\ FER\embedded\Assignment2\SETR_Assignment2\CmdProc\cmdproc.h

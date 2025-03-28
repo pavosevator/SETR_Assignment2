@@ -11,6 +11,23 @@
 
 int main(void) 
 {
+	signed char temp;
+	unsigned char hum;
+	unsigned int co2;
+	
+	temp = (signed char)psrnd(-50,60);
+	hum = (unsigned char)psrnd(0,100);
+	co2 = (unsigned int)psrnd(400,20000);
+
+	/* Convert values to char */
+	char *tempChar = generateCharArray('t', temp);
+	char *humChar = generateCharArray('h', hum);
+	char *co2Char = generateCharArray('c', co2);
+
+	printf("%s\n", tempChar);
+	printf("%s\n", humChar);
+	printf("%s\n", co2Char);
+
 	int i,len, err;
 	unsigned char ans[30]; 
 	unsigned char ansTest1[]={'#','p','t', '+', '2', '1', '1', '1', '4','!'};

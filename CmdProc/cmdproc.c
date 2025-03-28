@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "cmdproc.h"
 
@@ -20,12 +21,12 @@ static unsigned char tHistoryLen = 0;
 static unsigned char hHistoryLen = 0;
 static unsigned char cHistoryLen = 0;
 
-/* Measured values: temperature [-50, 60] °C, humidity [0,100] %, C02 [400-20k] ppm*/
-static signed char temp;
-static unsigned char hum;
-static unsigned int co2;
 /* Define seed for use of pseudo random value generator */
 static unsigned int seed = 1;
+
+/* UART communication is defined with state machines, for Rx and Tx separately */
+static UART_State_t stateRx = UART_STATE_IDLE;
+static UART_State_t stateTx = UART_STATE_IDLE;
 
 /* Function implementation */
 
@@ -37,33 +38,17 @@ int cmdProcessor(void)
 	int i;
 	unsigned char sid;
 
-	/* Detect empty cmd string */
-	if(rxBufLen == 0)
-		return -1; 
-	
-	/* Find index of SOF */
-	for(i=0; i < rxBufLen; i++) {
-		if(UARTRxBuffer[i] == SOF_SYM) {
-			break;
-		}
-	}
-	
+	/* Measured values: temperature [-50, 60] °C, humidity [0,100] %, C02 [400-20k] ppm*/
+	signed char temp;
+	unsigned char hum;
+	unsigned int co2;
+
 	/* If a SOF was found look for commands */
 	if(i < rxBufLen) {
 		
 		switch(UARTRxBuffer[i+1]) { 
 			
 			case 'A': /*  reads the real-time values of the variables provided by the sensor */
-				
-				/* Check checksum */
-				if(!(calcChecksum(&(UARTRxBuffer[i+1]),2))) {
-					return -3;
-				}
-				
-				/* Check EOF */
-				if(UARTRxBuffer[i+4] != EOF_SYM) {
-					return -4;
-				}
 
 				/* Sending of the data */
 				/* Emulate pseudo random generation of sensor outputs */
@@ -77,44 +62,69 @@ int cmdProcessor(void)
 				addInHistory(&co2, 'c');
 				
 				/* Convert values to char */
-				char *tempChar = generateCharArray(temp, 1);
-				char *humChar = generateCharArray(hum, 0);
-				char *co2Char = generateCharArray(co2, 0);
+				char *tempChar = generateCharArray('t', temp);
+				char *humChar = generateCharArray('h', hum);
+				char *co2Char = generateCharArray('c', co2);
 
+				int printCounter = 0;
 				/* Use txChar func() */
+				txChar('#');
+				txChar('a');
+				txChar('t');
+				while(tempChar[printCounter] != '\0') {
+					txChar(tempChar[printCounter]);
+					printCounter++;
+				}
+				printCounter = 0;
+				txChar('h');
+				while(humChar[printCounter] != '\0') {
+					txChar(humChar[printCounter]);
+					printCounter++;
+				}
+				printCounter = 0;
+				txChar('c');
+				while(co2Char[printCounter] != '\0') {
+					txChar(co2Char[printCounter]);
+					printCounter++;
+				}
+				printCounter = 0;
+				/* Don't forget checksum!*/
+				txChar('!');
+
+				return 0;
+
 			case 'P':		
 				/* Command "P" detected.							*/
 				/* Follows one DATA byte that specifies the sensor	*/ 
 				/* to read. I assume 't','h','c' for temp., humid. 	*/
 				/* and CO2, resp.									*/   
-		
+				char* outputChar;
+
 				/* Check sensor type */
 				sid = UARTRxBuffer[i+2];
 				if(sid != 't' && sid != 'h' && sid != 'c') {
 					return -2;
-				}
-				
-				/* Check checksum */
-				if(!(calcChecksum(&(UARTRxBuffer[i+1]),2))) {
-					return -3;
-				}
-				
-				/* Check EOF */
-				if(UARTRxBuffer[i+6] != EOF_SYM) {
-					return -4;
-				}
+				} 
+
+				if(sid == 't'){
+					temp = (signed char)psrnd(-50,60);
+					addInHistory(&temp, 't');
+					outputChar = generateCharArray('t',temp);
+
+				} else if(sid == 'h'){
+					hum = (unsigned char)psrnd(0,100);
+					addInHistory(&hum, 'h');
+					outputChar = generateCharArray('h', hum);
+
+				} else if(sid == 'c'){
+					co2 = (unsigned int)psrnd(400,20000);
+					addInHistory(&co2, 'c');
+					outputChar = generateCharArray('c',co2);
+				} 
 			
-				/* Command is (is it? ... ) valid. Produce answer and terminate */ 
-				txChar('#');
-				txChar('p'); /* p is the reply to P 							*/	
-				txChar('t'); /* t indicate that it is a temperature 			*/
-				txChar('+'); /* This is the sensor reading. You should call a 	*/
-				txChar('2'); /*   function that emulates the reading of a 		*/
-				txChar('1'); /*   sensor value 	*/
-				txChar('1'); /* Checksum is 114 decimal in this case		*/
-				txChar('1'); /*   You should call a funcion that computes 	*/
-				txChar('4'); /*   the checksum for any command 				*/  
-				txChar('!');
+				for(int i = 0; i < strlen(outputChar); i++) {
+					txChar(outputChar[i]);
+				}
 				
 				/* Here you should remove the characters that are part of the 		*/
 				/* command from the RX buffer. I'm just resetting it, which is not 	*/
@@ -137,10 +147,41 @@ int cmdProcessor(void)
 
 }
 
+/* Checks if the Rx data is ready for processing*/
+int checkRxDataReady(void)
+{
+	int sofIndex;
+	/* Detect empty cmd string */
+	if(rxBufLen == 0)
+		return -1; 
+	
+	/* Find index of SOF */
+	for(int j = 0; j < rxBufLen; j++) {	
+		if(UARTRxBuffer[j] == SOF_SYM) {
+			int sofIndex = j;
+			break;
+		}
+	}
+	/* Find index of EOF */
+	for(int j = 0; j < rxBufLen; j++) {	
+		if(UARTRxBuffer[j] == SOF_SYM) {
+			int sofIndex = j;
+			break;
+		}
+	}
+	/* See if checksum is valid */
+
+	/* Command is valid */
+	
+	return sofIndex;
+
+}
+
 /*
-	Separate function for adding values in history
+	Separate function for adding values in history using circular buffer
 */
-int addInHistory(void *measuredValue, char sensorType) {
+int addInHistory(void *measuredValue, char sensorType) 
+{
 	switch (sensorType) {
         case 't': // Temperature
             tHistory[tHistoryLen] = *(signed char *)measuredValue; // Cast to signed char
@@ -166,7 +207,8 @@ int addInHistory(void *measuredValue, char sensorType) {
 /* 
  * calcChecksum
  */ 
-int calcChecksum(unsigned char * buf, int nbytes) {
+int calcChecksum(unsigned char * buf, int nbytes) 
+{
 	/* Here you are supposed to compute the modulo 256 checksum */
 	/* of the first n bytes of buf. Then you should convert the */
 	/* checksum to ascii (3 digitas/chars) and compare each one */
@@ -190,6 +232,9 @@ int rxChar(unsigned char car)
 		return 0;		
 	}	
 	/* If cmd string full return error */
+	stateRx = UART_STATE_ERROR;
+	/* Delete all wrong chars in buffer until reaching ! */
+	
 	return -1;
 }
 
@@ -252,35 +297,26 @@ int psrnd(int min,int max)
 
 }
 
-char *generateCharArray(int value, char temp_flag) {
-    static char result[7]; // Static array, 6 since that the maximum number of digits in this scenario (5 digits + \0)
+char *generateCharArray(char flag, int value) 
+{
+    char* tResult; // Static arrays are used, because if its one array, it will be overwritten and only last data will we there
+    char* hResult; 
+    char* cResult; 
     int i = 0;
 	char temp;
-	char sign;
 
-	if(temp_flag){
-		if(value < 0){
-			sign = '-';
-			value = -value;
-		} else {
-			sign = '+';
-		}
-		result[i++] = sign;
+	/* Adds sign in case of temperature*/
+	if(flag == 't'){
+		char sign = (value < 0) ? '-' : '+';
+		sprintf(tResult, "%c%02d", sign, abs(value));
+		return tResult;	
+	} else if(flag == 'h') {
+		sprintf(hResult, "%03d", value);
+		return hResult;
+	} else if(flag == 'c') {
+		sprintf(cResult, "%05d", value);
+		return cResult;
 	}
-	
 
-    // Convert the value to a string 
-    int divisor = 1;
-    while (value / divisor >= 10) {
-        divisor *= 10; // Find the largest divisor
-    }
 
-    while (divisor > 0) {
-        int digit = value / divisor; // Extract the most significant digit
-        result[i++] = digit + '0';   // Convert digit to character
-        value %= divisor;           // Remove the most significant digit
-        divisor /= 10;              // Move to the next digit
-    }
-
-    return result;
 }
