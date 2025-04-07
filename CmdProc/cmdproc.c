@@ -88,7 +88,15 @@ int cmdProcessor(void)
 					printCounter++;
 				}
 				printCounter = 0;
+				
 				/* Don't forget checksum!*/
+				char *checksumchar = generateCharArray('c', calcChecksum(UARTTxBuffer,/*nbytes?*/8));
+				while(checksumchar[printCounter] != '\0') {
+					txChar(checksumchar[printCounter]);
+					printCounter++;
+				}
+				printCounter = 0;
+
 				txChar('!');
 
 				return 0;
@@ -216,8 +224,13 @@ int calcChecksum(unsigned char * buf, int nbytes)
 	/* positions nbytes, nbytes + 1 and nbytes +2. 				*/
 	
 	/* That is your work to do. In this example I just assume 	*/
-	/* that the checksum is always OK.							*/	
-	return 1;		
+	/* that the checksum is always OK.							*/
+	int checksum=0;
+	for(int j=0;j<nbytes;j++)
+	{
+		checksum+=buf[j];
+	}
+	return (checksum % 256);		
 }
 
 /*
