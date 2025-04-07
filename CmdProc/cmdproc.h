@@ -22,7 +22,8 @@
 #define UART_TX_SIZE 20 	/* Maximum size of the TX buffer */ 
 #define HISTORY_SIZE 100    /* Maximum size of history of sensors values*/
 #define SOF_SYM '#'	        /* Start of Frame Symbol */
-#define EOF_SYM '!'          /* End of Frame Symbol */
+#define EOF_SYM '!'         /* End of Frame Symbol */
+#define CS_DIGITS 3         /* Number of digits for checksum */
 
 /* Defines return values */
 #define CMD_OK 0
@@ -61,7 +62,7 @@ int cmdProcessor(void);
 /* ************************************************************ */
 /* Checks if data in the Rx buffer is valid             		*/
 /* ************************************************************ */
-int checkRxDataReady(void);
+int checkSofEof(int * sofIndex, int * eofIndex);
 
 /* ******************************** */
 /* Adds a char to the RX buffer 	*/
@@ -102,6 +103,11 @@ void getTxBuffer(unsigned char * buf, int * len);
 int calcChecksum(unsigned char * buf, int nbytes);
 
 /* ************************************************ */
+/* Checks the checksum of a rx buffer               */
+/* ************************************************ */ 
+int checkRxChecksum(int * sofIndex, int * eofIndex);
+
+/* ************************************************ */
 /* Adds given values to dedicated history buffer    */
 /* ************************************************ */ 
 int addInHistory(void *measuredValue, char sensorType);
@@ -114,6 +120,6 @@ int psrnd(signed int min, signed int max);
 /* **************************************** */
 /* Converts value in int form to char array */
 /* **************************************** */ 
-char *generateCharArray(char flag, int value);
+void generateCharArray(char flag, int value, char* buffer);
 
 #endif

@@ -44,8 +44,21 @@ int cmdProcessor(void)
 	unsigned char hum;
 	unsigned int co2;
 
-	/* If a SOF was found look for commands */
-	if(i < rxBufLen) {
+	/* Char arrays for output */
+	char tempChar[4];
+	char humChar[4];
+	char co2Char[6];
+	char checksumchar[3];
+
+	/* Pointers to start and end of frames*/
+	int sofIndex;
+	int eofIndex;
+
+	if(checkSofEof(&sofIndex, &eofIndex) != 1) 
+		return -1; // reports that frame is not valid, missing SOF or EOF or empty frame
+
+	/* Check if frame has valid checksum*/
+	if(checkRxChecksum(&sofIndex, &eofIndex) == 1) {
 		
 		switch(UARTRxBuffer[i+1]) { 
 			
@@ -63,9 +76,9 @@ int cmdProcessor(void)
 				addInHistory(&co2, 'c');
 				
 				/* Convert values to char */
-				char *tempChar = generateCharArray('t', temp);
-				char *humChar = generateCharArray('h', hum);
-				char *co2Char = generateCharArray('c', co2);
+				generateCharArray('t', temp, tempChar);
+				generateCharArray('h', hum, humChar);
+				generateCharArray('c', co2, co2Char);
 
 				int printCounter = 0;
 				/* Use txChar func() */
@@ -90,8 +103,8 @@ int cmdProcessor(void)
 				}
 				printCounter = 0;
 				
-				/* Don't forget checksum!*/
-				char *checksumchar = generateCharArray('c', calcChecksum(UARTTxBuffer,/*nbytes?*/8));
+				snprintf(checksumchar, 3, "%03d", calcChecksum(UARTTxBuffer, strlen(UARTTxBuffer)));
+
 				while(checksumchar[printCounter] != '\0') {
 					txChar(checksumchar[printCounter]);
 					printCounter++;
@@ -107,7 +120,7 @@ int cmdProcessor(void)
 				/* Follows one DATA byte that specifies the sensor	*/ 
 				/* to read. I assume 't','h','c' for temp., humid. 	*/
 				/* and CO2, resp.									*/   
-				char* outputChar;
+				char outputChar[6];
 
 				/* Check sensor type */
 				sid = UARTRxBuffer[i+2];
@@ -118,23 +131,35 @@ int cmdProcessor(void)
 				if(sid == 't'){
 					temp = (signed char)psrnd(-50,60);
 					addInHistory(&temp, 't');
-					outputChar = generateCharArray('t',temp);
+					generateCharArray('t',temp, outputChar);
 
 				} else if(sid == 'h'){
 					hum = (unsigned char)psrnd(0,100);
 					addInHistory(&hum, 'h');
-					outputChar = generateCharArray('h', hum);
+					generateCharArray('h', hum, outputChar);
 
 				} else if(sid == 'c'){
 					co2 = (unsigned int)psrnd(400,20000);
 					addInHistory(&co2, 'c');
-					outputChar = generateCharArray('c',co2);
+					generateCharArray('c',co2,outputChar);
 				} 
-			
+				
+				/* Sending of the data */
+				txChar('#');
+				txChar('p');
+				txChar(sid);
+				
 				for(int i = 0; i < strlen(outputChar); i++) {
 					txChar(outputChar[i]);
 				}
+
+				snprintf(checksumchar, 4, "%03d", calcChecksum(UARTTxBuffer, strlen(UARTTxBuffer)));
+				for(int i = 0; i < CS_DIGITS; i++) {
+					txChar(checksumchar[i]);
+				}
 				
+				txChar('!');
+
 				/* Here you should remove the characters that are part of the 		*/
 				/* command from the RX buffer. I'm just resetting it, which is not 	*/
 				/* a good solution, as a new command could be in progress and		*/
@@ -157,66 +182,44 @@ int cmdProcessor(void)
 }
 
 /* Checks if the Rx data is ready for processing*/
-int checkRxDataReady(void)
-{
-	int sofIndex;
+int checkSofEof(int * sofIndex, int * eofIndex)
+{	
 	/* Detect empty cmd string */
 	if(rxBufLen == 0)
 		return -1; 
 	
+	int sof = -1;
+	int eof = -1;
+
 	/* Find index of SOF */
 	for(int j = 0; j < rxBufLen; j++) {	
 		if(UARTRxBuffer[j] == SOF_SYM) {
-			int sofIndex = j;
+			sof = j;
 			break;
 		}
 	}
+	if(sof == -1) return 0; // '#' not found
+
 	/* Find index of EOF */
-	for(int j = 0; j < rxBufLen; j++) {	
-		if(UARTRxBuffer[j] == SOF_SYM) {
-			int sofIndex = j;
+	for(int j = sof; j < rxBufLen; j++) {	
+		if(UARTRxBuffer[j] == EOF_SYM) {
+			eof = j;
 			break;
 		}
 	}
-	/* See if checksum is valid */
-
-	/* Command is valid */
+	if(eof == -1) return 0; // '!' not found
 	
-	return sofIndex;
+	*sofIndex = sof;
+	*eofIndex = eof;
 
-}
+	return 1; // command is valid
 
-/*
-	Separate function for adding values in history using circular buffer
-*/
-int addInHistory(void *measuredValue, char sensorType) 
-{
-	switch (sensorType) {
-        case 't': // Temperature
-            tHistory[tHistoryLen] = *(signed char *)measuredValue; // Cast to signed char
-            tHistoryLen = (tHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
-            return 0;
-
-        case 'h': // Humidity
-            hHistory[hHistoryLen] = *(unsigned char *)measuredValue; // Cast to unsigned char
-            hHistoryLen = (hHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
-            return 0;
-
-        case 'c': // CO2
-            cHistory[cHistoryLen] = *(unsigned int *)measuredValue; // Cast to unsigned int
-            cHistoryLen = (cHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
-            return 0;
-
-        default:
-            // Invalid sensor type
-            return -1;
-    }
 }
 
 /* 
  * calcChecksum
  */ 
-int calcChecksum(unsigned char * buf, int nbytes) 
+int calcChecksum(unsigned char * buffer, int nbytes) 
 {
 	/* Here you are supposed to compute the modulo 256 checksum */
 	/* of the first n bytes of buf. Then you should convert the */
@@ -227,11 +230,29 @@ int calcChecksum(unsigned char * buf, int nbytes)
 	/* That is your work to do. In this example I just assume 	*/
 	/* that the checksum is always OK.							*/
 	int checksum=0;
-	for(int j=0;j<nbytes;j++)
+	for(int j = 0; j<nbytes; j++)
 	{
-		checksum+=buf[j];
+		checksum+=buffer[j];
 	}
+
 	return (checksum % 256);		
+}
+
+int checkRxChecksum(int * sofIndex, int * eofIndex)
+{
+	// calculate checksum
+	int payloadLen;
+	payloadLen = *eofIndex - CS_DIGITS - 1 - *sofIndex; // length of the payload
+	int checksum = calcChecksum(UARTRxBuffer + *sofIndex + 1, payloadLen);
+	char checksumchar[4];
+	snprintf(checksumchar, 4, "%03d", checksum);
+
+	for(int i = 0; i < strlen(checksumchar); i++) {
+		if(checksumchar[i] != UARTRxBuffer[*eofIndex - 3 + i]) {
+			return -1; // digits are not aligning
+		}
+	}
+	return 1; // test is passed
 }
 
 /*
@@ -311,41 +332,48 @@ int psrnd(int min,int max)
 
 }
 
-char* generateCharArray(char flag, int value) {
-    char* result = NULL;
+/*
+	Separate function for adding values in history using circular buffer
+*/
+int addInHistory(void *measuredValue, char sensorType) 
+{
+	switch (sensorType) {
+        case 't': // Temperature
+            tHistory[tHistoryLen] = *(signed char *)measuredValue; // Cast to signed char
+            tHistoryLen = (tHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
+            return 0;
 
-    switch(flag) {
-        case 't': {
-            // + or - followed by two-digit number
-            result = malloc(4); // +XX\0 = 4 bytes
-            if (result != NULL) {
-                snprintf(result, 4, "%c%02d", (value < 0 ? '-' : '+'), abs(value));
-            }
-            break;
-        }
-        case 'h': {
-            // Always 3 digits
-            result = malloc(4); // XXX\0 = 4 bytes
-            if (result != NULL) {
-                snprintf(result, 4, "%03d", value);
-            }
-            break;
-        }
-        case 'c': {
-            // Always 5 digits
-            result = malloc(6); // XXXXX\0 = 6 bytes
-            if (result != NULL) {
-                snprintf(result, 6, "%05d", value);
-            }
-            break;
-        }
-        default: {
-            result = malloc(1);
-            if (result != NULL) {
-                result[0] = '\0'; // return empty string
-            }
-        }
+        case 'h': // Humidity
+            hHistory[hHistoryLen] = *(unsigned char *)measuredValue; // Cast to unsigned char
+            hHistoryLen = (hHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
+            return 0;
+
+        case 'c': // CO2
+            cHistory[cHistoryLen] = *(unsigned int *)measuredValue; // Cast to unsigned int
+            cHistoryLen = (cHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
+            return 0;
+
+        default:
+            // Invalid sensor type
+            return -1;
     }
+}
 
-    return result;
+void generateCharArray(char flag, int value, char* buffer) {
+    switch(flag) {
+        case 't':
+		/* sign + two digits + \0 = 4 bytes*/
+            snprintf(buffer, 4, "%c%02d", (value < 0 ? '-' : '+'), abs(value));
+            break;
+        case 'h':
+		/* three digits + \0 = 4 bytes*/
+            snprintf(buffer, 4, "%03d", value);
+            break;
+        case 'c':
+		/* five digits + \0 = 6 bytes*/
+            snprintf(buffer, 6, "%05d", value);
+            break;
+        default:
+            buffer[0] = '\0';
+    }
 }
