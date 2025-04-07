@@ -10,7 +10,7 @@
 
 
 int main(void) 
-{
+{	
 	int i,len, err;
 	unsigned char ans[30]; 
 	unsigned char ansTest1[]={'#','p','t', '+', '2', '1', '1', '1', '4','!'};
@@ -28,18 +28,25 @@ int main(void)
 	
 	/* 1 - send the command */
 	rxChar('#');
-	rxChar('P');
-	rxChar('t');
-	rxChar('1');
-	rxChar('9');
+	rxChar('A');
+	rxChar('0');
 	rxChar('6');
+	rxChar('5');
 	rxChar('!');
 			
 	/* 2 - Process the comand and check the answer */
 	
-	cmdProcessor();
+	int a = cmdProcessor();
+	printf("Answer is %d\n", a);
+
+	if(cmdProcessor() == 0){
+		printf("Test 1 succeeded\n");
+		getTxBuffer(ans,&len);
+		printf("Answer is %s\n", ans);
+	}
 	
-	getTxBuffer(ans,&len);
+
+	
 	if(memcmp(ans,ansTest1,len)) {
 		printf("Test 1 failed\n");
 	} else {

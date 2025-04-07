@@ -56,11 +56,12 @@ int cmdProcessor(void)
 
 	if(checkSofEof(&sofIndex, &eofIndex) != 1) 
 		return -1; // reports that frame is not valid, missing SOF or EOF or empty frame
-
+	
 	/* Check if frame has valid checksum*/
 	if(checkRxChecksum(&sofIndex, &eofIndex) == 1) {
-		
-		switch(UARTRxBuffer[i+1]) { 
+		printf("SOF: %d\n", sofIndex);
+		printf("EOF:%d\n", eofIndex);
+		switch(UARTRxBuffer[sofIndex+1]) { 
 			
 			case 'A': /*  reads the real-time values of the variables provided by the sensor */
 
@@ -80,37 +81,39 @@ int cmdProcessor(void)
 				generateCharArray('h', hum, humChar);
 				generateCharArray('c', co2, co2Char);
 
-				int printCounter = 0;
+
 				/* Use txChar func() */
+				// Start of frame
 				txChar('#');
+
+				// Start of response
 				txChar('a');
+
+				// Send temperature data
 				txChar('t');
-				while(tempChar[printCounter] != '\0') {
-					txChar(tempChar[printCounter]);
-					printCounter++;
+				for(int j = 0; j < T_DIGITS; j++){
+					txChar(tempChar[j]);
 				}
-				printCounter = 0;
+
+				// Send humidity data
 				txChar('h');
-				while(humChar[printCounter] != '\0') {
-					txChar(humChar[printCounter]);
-					printCounter++;
+				for(int j = 0; j < H_DIGITS; j++){
+					txChar(humChar[j]);
 				}
-				printCounter = 0;
+
+				// Send CO2 data
 				txChar('c');
-				while(co2Char[printCounter] != '\0') {
-					txChar(co2Char[printCounter]);
-					printCounter++;
+				for(int j = 0; j < C_DIGITS; j++){
+					txChar(co2Char[j]);
 				}
-				printCounter = 0;
 				
-				snprintf(checksumchar, 3, "%03d", calcChecksum(UARTTxBuffer, strlen(UARTTxBuffer)));
-
-				while(checksumchar[printCounter] != '\0') {
-					txChar(checksumchar[printCounter]);
-					printCounter++;
+				// Send checksum
+				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer, A_RESPONSE_PAYLOAD_LEN)); // what if buffer is not start of frame + 1 
+				for(int j = 0; j < CS_DIGITS; j++){
+					txChar(checksumchar[j]);
 				}
-				printCounter = 0;
 
+				// End of frame
 				txChar('!');
 
 				return 0;
@@ -141,23 +144,30 @@ int cmdProcessor(void)
 				} else if(sid == 'c'){
 					co2 = (unsigned int)psrnd(400,20000);
 					addInHistory(&co2, 'c');
-					generateCharArray('c',co2,outputChar);
+					generateCharArray('c',co2, outputChar);
 				} 
 				
 				/* Sending of the data */
 				txChar('#');
+
+				/* Start of response */
 				txChar('p');
+
+				/* Send sensor type */
 				txChar(sid);
-				
-				for(int i = 0; i < strlen(outputChar); i++) {
+
+				/* Send data */
+				for(int i = 0; i < strlen(outputChar) - 1; i++) {
 					txChar(outputChar[i]);
 				}
 
-				snprintf(checksumchar, 4, "%03d", calcChecksum(UARTTxBuffer, strlen(UARTTxBuffer)));
+				/* Send checksum */
+				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
 				for(int i = 0; i < CS_DIGITS; i++) {
 					txChar(checksumchar[i]);
 				}
 				
+				/* End of frame */
 				txChar('!');
 
 				/* Here you should remove the characters that are part of the 		*/

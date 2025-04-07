@@ -23,7 +23,11 @@
 #define HISTORY_SIZE 100    /* Maximum size of history of sensors values*/
 #define SOF_SYM '#'	        /* Start of Frame Symbol */
 #define EOF_SYM '!'         /* End of Frame Symbol */
+#define T_DIGITS 3          /* Number of digits for temperature */
+#define H_DIGITS 3          /* Number of digits for humidity */
+#define C_DIGITS 5          /* Number of digits for co2 */
 #define CS_DIGITS 3         /* Number of digits for checksum */
+#define A_RESPONSE_PAYLOAD_LEN (T_DIGITS + H_DIGITS + C_DIGITS + CS_DIGITS + 4) /* Length of the answer payload + 4 letters hardcoded (a, t, h, c)*/
 
 /* Defines return values */
 #define CMD_OK 0
