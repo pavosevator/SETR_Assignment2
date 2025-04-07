@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "cmdproc.h"
@@ -310,26 +311,41 @@ int psrnd(int min,int max)
 
 }
 
-char *generateCharArray(char flag, int value) 
-{
-    char* tResult; // Static arrays are used, because if its one array, it will be overwritten and only last data will we there
-    char* hResult; 
-    char* cResult; 
-    int i = 0;
-	char temp;
+char* generateCharArray(char flag, int value) {
+    char* result = NULL;
 
-	/* Adds sign in case of temperature*/
-	if(flag == 't'){
-		char sign = (value < 0) ? '-' : '+';
-		sprintf(tResult, "%c%02d", sign, abs(value));
-		return tResult;	
-	} else if(flag == 'h') {
-		sprintf(hResult, "%03d", value);
-		return hResult;
-	} else if(flag == 'c') {
-		sprintf(cResult, "%05d", value);
-		return cResult;
-	}
+    switch(flag) {
+        case 't': {
+            // + or - followed by two-digit number
+            result = malloc(4); // +XX\0 = 4 bytes
+            if (result != NULL) {
+                snprintf(result, 4, "%c%02d", (value < 0 ? '-' : '+'), abs(value));
+            }
+            break;
+        }
+        case 'h': {
+            // Always 3 digits
+            result = malloc(4); // XXX\0 = 4 bytes
+            if (result != NULL) {
+                snprintf(result, 4, "%03d", value);
+            }
+            break;
+        }
+        case 'c': {
+            // Always 5 digits
+            result = malloc(6); // XXXXX\0 = 6 bytes
+            if (result != NULL) {
+                snprintf(result, 6, "%05d", value);
+            }
+            break;
+        }
+        default: {
+            result = malloc(1);
+            if (result != NULL) {
+                result[0] = '\0'; // return empty string
+            }
+        }
+    }
 
-
+    return result;
 }

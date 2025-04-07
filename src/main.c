@@ -20,9 +20,9 @@ int main(void)
 	co2 = (unsigned int)psrnd(400,20000);
 
 	/* Convert values to char */
-	char *tempChar = generateCharArray('t', temp);
-	char *humChar = generateCharArray('h', hum);
-	char *co2Char = generateCharArray('c', co2);
+	char *tempChar = generateCharArray('t', (int)temp);
+	char *humChar = generateCharArray('h', (int)hum);
+	char *co2Char = generateCharArray('c', (int)co2);
 
 	printf("%s\n", tempChar);
 	printf("%s\n", humChar);
