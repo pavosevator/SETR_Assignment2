@@ -3,12 +3,12 @@
 
 void setUp(void) {
     // Initialisation
-    rxBufLen = 0;
-    txBufLen = 0;
-    stateRx = UART_STATE_IDLE;
-    stateTx = UART_STATE_IDLE;
-    memset(UARTRxBuffer, 0, UART_RX_SIZE);
-    memset(UARTTxBuffer, 0, UART_TX_SIZE);
+    static unsigned char rxBufLen = 0;
+    static unsigned char txBufLen = 0;
+    char stateRx = UART_STATE_IDLE;
+    char stateTx = UART_STATE_IDLE;
+    memset(static unsigned char UARTRxBuffer, 0, UART_RX_SIZE);
+    memset(static unsigned char UARTTxBuffer, 0, UART_TX_SIZE);
 }
 
 void tearDown(void) {
