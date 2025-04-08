@@ -7,8 +7,6 @@ void setUp(void) {
     static unsigned char txBufLen = 0;
     char stateRx = UART_STATE_IDLE;
     char stateTx = UART_STATE_IDLE;
-    memset(static unsigned char UARTRxBuffer, 0, UART_RX_SIZE);
-    memset(static unsigned char UARTTxBuffer, 0, UART_TX_SIZE);
 }
 
 void tearDown(void) {
@@ -18,13 +16,33 @@ void tearDown(void) {
 // Test commande 'A'
 void test_CommandA_ShouldReturnSensorData(void) {
     // Simulation commande 'A'
-    rxChar('A');
+    rxChar('#');
+	rxChar('A');
+	rxChar('0');
+	rxChar('6');
+	rxChar('5');
+	rxChar('!');
 
     // Call
     int result = cmdProcessor();
 
     // Verification
     TEST_ASSERT_EQUAL(CMD_OK, result);
+
+    resetRxBuffer();
+
+	rxChar('A');
+	rxChar('0');
+	rxChar('6');
+	rxChar('5');
+	rxChar('!');
+    
+    // Call
+    int result = cmdProcessor();
+
+    // Verification
+    TEST_ASSERT_EQUAL(-1, result);
+    
 
     // Verification TX
     char txBuffer[UART_TX_SIZE];

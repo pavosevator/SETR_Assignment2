@@ -1,0 +1,109 @@
+\doxysection{cmdproc.\+h}
+\hypertarget{cmdproc_8h_source}{}\label{cmdproc_8h_source}\mbox{\hyperlink{cmdproc_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ ******************************************************/}}
+\DoxyCodeLine{00002\ \textcolor{comment}{/*\ SETR\ 23/24,\ Paulo\ Pedreiras\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00003\ \textcolor{comment}{/*\ \ Base\ code\ for\ Unit\ Testing\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00004\ \textcolor{comment}{/*\ \ \ \ \ \ Simple\ example\ of\ command\ processor\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00005\ \textcolor{comment}{/*\ \ \ \ \ \ for\ smart\ sensor\ node\ with\ 3\ sensors\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00006\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00007\ \textcolor{comment}{/*\ \ Code\ is\ just\ for\ illustrative\ effects.\ E.g.\ error\ \ \ */}\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{/*\ \ \ \ \ \ codes\ are\ "{}magic\ numbers"{}\ in\ the\ middle\ of\ the\ \ */}}
+\DoxyCodeLine{00009\ \textcolor{comment}{/*\ \ \ \ \ \ code\ instead\ of\ being\ (defined)\ text\ literals,\ \ */}}
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ \ \ \ \ \ sensor\ data\ is\ not\ properly\ emulated,\ missing\ \ \ */}}
+\DoxyCodeLine{00011\ \textcolor{comment}{/*\ \ \ \ \ \ commands,\ Checksum\ not\ implemented,\ ...\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00012\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00013\ \textcolor{comment}{/*\ ******************************************************/}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#ifndef\ CMD\_PROC\_H\_}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ CMD\_PROC\_H\_}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{/*\ Some\ defines\ */}}
+\DoxyCodeLine{00030\ \textcolor{comment}{/*\ Other\ defines\ should\ be\ return\ codes\ of\ the\ functions\ */}}
+\DoxyCodeLine{00031\ \textcolor{comment}{/*\ E.g.\ \#define\ CMD\_EMPTY\_STRING\ -\/1\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ UART\_RX\_SIZE\ 20\ \ \ \ \ }}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ UART\_TX\_SIZE\ 20\ \ \ \ \ }}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ HISTORY\_SIZE\ 100\ \ \ \ }}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ SOF\_SYM\ '\#'\ \ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#define\ EOF\_SYM\ '!'\ \ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#define\ T\_DIGITS\ 3\ \ \ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#define\ H\_DIGITS\ 3\ \ \ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#define\ C\_DIGITS\ 5\ \ \ \ \ }}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#define\ CS\_DIGITS\ 3\ \ \ \ \ \ \ }}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#define\ A\_RESPONSE\_PAYLOAD\_LEN\ (T\_DIGITS\ +\ H\_DIGITS\ +\ C\_DIGITS\ +\ CS\_DIGITS\ +\ 4)\ }}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{comment}{/*\ Defines\ return\ values\ */}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#define\ CMD\_OK\ 0}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#define\ CMD\_EMPTY\_STRING\ -\/1}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#define\ CMD\_INCOMPLETE\ -\/2}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#define\ CMD\_INVALID\ -\/3}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#define\ CMD\_CS\_ERROR\ -\/4}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#define\ CMD\_FORMAT\_ERROR\ -\/5}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#define\ CMD\_BUFFER\_FULL\ -\/6}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#define\ CMD\_BUFFER\_EMPTY\ -\/7}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00147\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\{}
+\DoxyCodeLine{00148\ \ \ \ \ UART\_STATE\_IDLE,}
+\DoxyCodeLine{00149\ \ \ \ \ UART\_STATE\_BUSY,}
+\DoxyCodeLine{00150\ \ \ \ \ UART\_STATE\_DATA\_READY,}
+\DoxyCodeLine{00151\ \ \ \ \ UART\_STATE\_RECEIVING,}
+\DoxyCodeLine{00152\ \ \ \ \ UART\_STATE\_TRANSMITING,}
+\DoxyCodeLine{00153\ \ \ \ \ UART\_STATE\_COMPLETE,}
+\DoxyCodeLine{00154\ \ \ \ \ UART\_STATE\_ERROR}
+\DoxyCodeLine{00155\ \}\ \mbox{\hyperlink{cmdproc_8h_a48cd43073ec36c89fae72baaa719ac52}{UART\_State\_t}};}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \textcolor{comment}{/*\ Function\ prototypes\ */}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00174\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{cmdproc_8h_afbdfe0465dfd34a5f244fe41fa27c12a}{cmdProcessor}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00183\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{cmdproc_8h_af4b643cbe4d6c4473eec58b015044cdd}{checkSofEof}}(\textcolor{keywordtype}{int}\ *\ sofIndex,\ \textcolor{keywordtype}{int}\ *\ eofIndex);}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00191\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{cmdproc_8h_a67ae8a79a708a3c5471668bddbd16400}{rxChar}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ car);}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00200\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{cmdproc_8h_abdb4363f0662688850bbcdfb59ce4566}{txChar}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ car);}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00205\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{cmdproc_8h_a918f38a7eecdd03671d28a3a07f94856}{resetRxBuffer}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00210\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{cmdproc_8h_abd91ad9b5887f4769f45823899583bab}{resetTxBuffer}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00218\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{cmdproc_8h_a8beeddde9a644610c72724be856db6dd}{getTxBuffer}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *\ buf,\ \textcolor{keywordtype}{int}\ *\ len);}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \textcolor{comment}{/*\ ************************************************\ */}}
+\DoxyCodeLine{00221\ \textcolor{comment}{/*\ Computes\ the\ checksum\ of\ a\ given\ number\ of\ chars\ */}}
+\DoxyCodeLine{00222\ \textcolor{comment}{/*\ ************************************************\ */}\ }
+\DoxyCodeLine{00223\ \textcolor{keywordtype}{int}\ calcChecksum(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *\ buffer,\ \textcolor{keywordtype}{int}\ nbytes);}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \textcolor{comment}{/*\ ************************************************\ */}}
+\DoxyCodeLine{00226\ \textcolor{comment}{/*\ Checks\ the\ checksum\ of\ a\ rx\ buffer\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00227\ \textcolor{comment}{/*\ ************************************************\ */}\ }
+\DoxyCodeLine{00228\ \textcolor{keywordtype}{int}\ checkRxChecksum(\textcolor{keywordtype}{int}\ *\ sofIndex,\ \textcolor{keywordtype}{int}\ *\ eofIndex);}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00237\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{cmdproc_8h_a5c2454bba0f5fd587bf2c6277df9ee7e}{addInHistory}}(\textcolor{keywordtype}{void}\ *measuredValue,\ \textcolor{keywordtype}{char}\ sensorType);}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00246\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{cmdproc_8h_a73a1aa166f1a37ecf9110d031e6930c5}{psrnd}}(\textcolor{keywordtype}{signed}\ \textcolor{keywordtype}{int}\ min,\ \textcolor{keywordtype}{signed}\ \textcolor{keywordtype}{int}\ max);}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00255\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{cmdproc_8h_ae220cfb8f7e5a90196ef7273d0ada926}{generateCharArray}}(\textcolor{keywordtype}{char}\ flag,\ \textcolor{keywordtype}{int}\ value,\ \textcolor{keywordtype}{char}*\ buffer);}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}
