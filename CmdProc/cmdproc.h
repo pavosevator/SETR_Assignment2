@@ -104,7 +104,7 @@ void getTxBuffer(unsigned char * buf, int * len);
 /* ************************************************ */
 /* Computes the checksum of a given number of chars */
 /* ************************************************ */ 
-int calcChecksum(unsigned char * buf, int nbytes);
+int calcChecksum(unsigned char * buffer, int nbytes);
 
 /* ************************************************ */
 /* Checks the checksum of a rx buffer               */

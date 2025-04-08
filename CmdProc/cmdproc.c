@@ -116,6 +116,12 @@ int cmdProcessor(void)
 				// End of frame
 				txChar('!');
 
+				int frameLen = eofIndex - sofIndex + 1;
+				int newLen = rxBufLen - frameLen;
+				
+				memmove(UARTRxBuffer, UARTRxBuffer + frameLen, newLen);
+				rxBufLen = newLen;
+
 				return 0;
 
 			case 'P':		
@@ -170,12 +176,14 @@ int cmdProcessor(void)
 				/* End of frame */
 				txChar('!');
 
-				/* Here you should remove the characters that are part of the 		*/
-				/* command from the RX buffer. I'm just resetting it, which is not 	*/
-				/* a good solution, as a new command could be in progress and		*/
-				/* resetting  will generate errors									*/
-				rxBufLen = 0;	
+				int frameLen = eofIndex - sofIndex + 1;
+				int newLen = rxBufLen - frameLen;
 				
+				memmove(UARTRxBuffer, UARTRxBuffer + frameLen, newLen);
+				rxBufLen = newLen;
+
+				// TO DO - clear the rest of the buffer
+
 				return 0;
 								
 			default:
