@@ -13,7 +13,7 @@ int main(void)
 {	
 	int i,len, err;
 	unsigned char ans[30]; 
-	unsigned char ansTest1[]={'#','p','t', '+', '2', '1', '1', '1', '4','!'};
+	unsigned char ansTest1[]={'#','a','t', '+', '1', '1', 'h', '0', '8','3', 'c','0','0','9','9','5', '2', '4','2', '!'};
 	
 	printf("\n Smart Sensor interface emulation \n");
 	printf(" \t - simple illustration of interface and use \n\n\r");
@@ -24,25 +24,27 @@ int main(void)
 	
 	/* Test 1 */
 	
-	printf("Test1 - check the answer to a valid Pt command\n");
+	printf("Test1 - check the answer to a valid A command\n\n");
+	
+	printf("Expected value of the answers: t = %d\n", 11); 
+	printf("Expected value of the answers: h = %d\n", 83); 
+	printf("Expected value of the answers: c = %d\n", 995); 
 	
 	/* 1 - send the command */
+	//rxChar('x');
 	rxChar('#');
 	rxChar('A');
 	rxChar('0');
 	rxChar('6');
 	rxChar('5');
 	rxChar('!');
+
 			
 	/* 2 - Process the comand and check the answer */
-	
-	int a = cmdProcessor();
-	printf("Answer is %d\n", a);
 
 	if(cmdProcessor() == 0){
-		printf("Test 1 succeeded\n");
+		printf("Test 1 succeeded - command processed\n");
 		getTxBuffer(ans,&len);
-		printf("Answer is %s\n", ans);
 	}
 	
 
@@ -50,7 +52,7 @@ int main(void)
 	if(memcmp(ans,ansTest1,len)) {
 		printf("Test 1 failed\n");
 	} else {
-		printf("Test 1 succeeded\n");
+		printf("Test 1 succeeded - received and expected results are the same\n");
 	}	
 	
 	/* You can print the answer to see what is wrong, if necessary */
@@ -64,12 +66,13 @@ int main(void)
 		printf("%c", ansTest1[i]);
 	}
 	printf("\n");
+	printf("\n");
 	
 	
 	/* Test 2 */
 	
 	printf("Test2 - check the answer to a transmission omission/error \n");
-	
+
 	/* 1 - send the command */
 	rxChar('#');
 	rxChar('P');
@@ -80,16 +83,16 @@ int main(void)
 	rxChar('!');
 			
 	/* 2 - Process the comand and check the answer */
-	
 	err=cmdProcessor();
-		
+	printf("err = %d\n", err);
+
 	if(err == -2) {
 		printf("Test 2 succeeded, as omission was detected\n");
 	} else {
 		printf("Test 2 failed, as omission was not detected\n");
 	}		
 	
-	/* Much more tests are needed. Unity shoul be used for it. */
+	/* Much more tests are needed. Unity should be used for it. */
 	
 	return 0;
 }

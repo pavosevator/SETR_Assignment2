@@ -61,6 +61,8 @@ int cmdProcessor(void)
 	if(checkRxChecksum(&sofIndex, &eofIndex) == 1) {
 		printf("SOF: %d\n", sofIndex);
 		printf("EOF:%d\n", eofIndex);
+		int frameLen, newLen;
+
 		switch(UARTRxBuffer[sofIndex+1]) { 
 			
 			case 'A': /*  reads the real-time values of the variables provided by the sensor */
@@ -116,11 +118,21 @@ int cmdProcessor(void)
 				// End of frame
 				txChar('!');
 
-				int frameLen = eofIndex - sofIndex + 1;
-				int newLen = rxBufLen - frameLen;
+				frameLen = eofIndex - sofIndex + 1;
+				newLen = rxBufLen - frameLen;
 				
 				memmove(UARTRxBuffer, UARTRxBuffer + frameLen, newLen);
 				rxBufLen = newLen;
+
+				memset(UARTRxBuffer + newLen, '\0', frameLen);
+				/*
+				for(int j = eofIndex; j <= rxBufLen; j++){
+					UARTRxBuffer[j - eofIndex - 1] = UARTRxBuffer[j];
+				}
+				*/
+
+				//printf("Leftover %d bytes: %s\n", rxBufLen, UARTRxBuffer);
+				//printf("Content of the message: %s\n", UARTTxBuffer);
 
 				return 0;
 
@@ -132,10 +144,11 @@ int cmdProcessor(void)
 				char outputChar[6];
 
 				/* Check sensor type */
-				sid = UARTRxBuffer[i+2];
+				sid = UARTRxBuffer[sofIndex+2];
 				if(sid != 't' && sid != 'h' && sid != 'c') {
 					return -2;
 				} 
+				printf("%c", sid);
 
 				if(sid == 't'){
 					temp = (signed char)psrnd(-50,60);
@@ -176,16 +189,20 @@ int cmdProcessor(void)
 				/* End of frame */
 				txChar('!');
 
-				int frameLen = eofIndex - sofIndex + 1;
-				int newLen = rxBufLen - frameLen;
+				frameLen = eofIndex - sofIndex + 1;
+				newLen = rxBufLen - frameLen;
 				
 				memmove(UARTRxBuffer, UARTRxBuffer + frameLen, newLen);
 				rxBufLen = newLen;
 
-				// TO DO - clear the rest of the buffer
+				// Clear the rest of the buffer
+				memset(UARTRxBuffer, '\0', frameLen);
 
 				return 0;
-								
+			case 'L': // send back latest 20 results from history TO DO
+				return 0;
+			case 'R': // reset the history TO DO
+				return 0;			
 			default:
 				/* If code reaches this place, the command is not recognized */
 				return -2;				
@@ -321,7 +338,8 @@ void resetRxBuffer(void)
  */
 void resetTxBuffer(void)
 {
-	txBufLen = 0;		
+	//memset(UARTRxBuffer + newLen, '\0', frameLen);	
+	txBufLen = 0;	
 	return;
 }
 
