@@ -54,14 +54,18 @@ int cmdProcessor(void)
 	int sofIndex;
 	int eofIndex;
 
-	if(checkSofEof(&sofIndex, &eofIndex) != 1) 
-		return -1; // reports that frame is not valid, missing SOF or EOF or empty frame
+	if(checkSofEof(&sofIndex, &eofIndex) != CMD_EMPTY_STRING) 
+		return CMD_EMPTY_STRING;  // empty string
+
+	if(checkSofEof(&sofIndex, &eofIndex) != CMD_FORMAT_ERROR) 
+		return CMD_FORMAT_ERROR; 	// # or ! not found	
 	
+	int frameLen, newLen;
 	/* Check if frame has valid checksum*/
-	if(checkRxChecksum(&sofIndex, &eofIndex) == 1) {
+	if(checkRxChecksum(&sofIndex, &eofIndex) == CMD_OK) {
 		printf("SOF: %d\n", sofIndex);
 		printf("EOF:%d\n", eofIndex);
-		int frameLen, newLen;
+		
 
 		switch(UARTRxBuffer[sofIndex+1]) { 
 			
@@ -134,7 +138,7 @@ int cmdProcessor(void)
 				//printf("Leftover %d bytes: %s\n", rxBufLen, UARTRxBuffer);
 				//printf("Content of the message: %s\n", UARTTxBuffer);
 
-				return 0;
+				return CMD_OK;
 
 			case 'P':		
 				/* Command "P" detected.							*/
@@ -196,23 +200,30 @@ int cmdProcessor(void)
 				rxBufLen = newLen;
 
 				// Clear the rest of the buffer
-				memset(UARTRxBuffer, '\0', frameLen);
+				memset(UARTRxBuffer + newLen, '\0', frameLen);
 
-				return 0;
+				return CMD_OK;
 			case 'L': // send back latest 20 results from history TO DO
-				return 0;
+				return CMD_OK;
 			case 'R': // reset the history TO DO
-				return 0;			
+				return CMD_OK;			
 			default:
 				/* If code reaches this place, the command is not recognized */
-				return -2;				
+				// delete leftover of command
+				printf("Check this: %s", UARTRxBuffer);
+				frameLen = eofIndex - sofIndex + 1;
+				newLen = rxBufLen - frameLen;
+				memset(UARTRxBuffer	, '\0', frameLen);
+				return CMD_INVALID;				
 		}
 		
 		
 	}
-	
-	/* Cmd string not null and SOF not found */
-	return -4;
+	printf("Check this: %s", UARTRxBuffer);
+	frameLen = eofIndex - sofIndex + 1;
+	newLen = rxBufLen - frameLen;
+	memset(UARTRxBuffer	, '\0', frameLen);
+	return CMD_CS_ERROR; // checksum not aligning
 
 }
 
@@ -221,7 +232,7 @@ int checkSofEof(int * sofIndex, int * eofIndex)
 {	
 	/* Detect empty cmd string */
 	if(rxBufLen == 0)
-		return -1; 
+		return CMD_EMPTY_STRING; 
 	
 	int sof = -1;
 	int eof = -1;
@@ -233,7 +244,7 @@ int checkSofEof(int * sofIndex, int * eofIndex)
 			break;
 		}
 	}
-	if(sof == -1) return 0; // '#' not found
+	if(sof == -1) return CMD_FORMAT_ERROR; // '#' not found
 
 	/* Find index of EOF */
 	for(int j = sof; j < rxBufLen; j++) {	
@@ -242,12 +253,12 @@ int checkSofEof(int * sofIndex, int * eofIndex)
 			break;
 		}
 	}
-	if(eof == -1) return 0; // '!' not found
+	if(eof == -1) return CMD_FORMAT_ERROR; // '!' not found
 	
 	*sofIndex = sof;
 	*eofIndex = eof;
 
-	return 1; // command is valid
+	return CMD_OK; // command is valid
 
 }
 
@@ -284,10 +295,10 @@ int checkRxChecksum(int * sofIndex, int * eofIndex)
 
 	for(int i = 0; i < strlen(checksumchar); i++) {
 		if(checksumchar[i] != UARTRxBuffer[*eofIndex - 3 + i]) {
-			return -1; // digits are not aligning
+			return CMD_CS_ERROR; // digits are not aligning
 		}
 	}
-	return 1; // test is passed
+	return CMD_OK; // test is passed
 }
 
 /*
@@ -391,7 +402,7 @@ int addInHistory(void *measuredValue, char sensorType)
 
         default:
             // Invalid sensor type
-            return -1;
+            return CMD_INVALID;
     }
 }
 

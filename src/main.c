@@ -86,13 +86,34 @@ int main(void)
 	err=cmdProcessor();
 	printf("err = %d\n", err);
 
-	if(err == -2) {
-		printf("Test 2 succeeded, as omission was detected\n");
+	if(err == -4) {
+		printf("Test 2 succeeded, as omission was detected - checksum was appropriate\n");
 	} else {
-		printf("Test 2 failed, as omission was not detected\n");
+		printf("Test 2 failed, as omission was not detected - was not appropriate\n");
 	}		
 	
-	/* Much more tests are needed. Unity should be used for it. */
+	
+	/* Test 3 */
+	
+	printf("\nTest3 - check the answer to an invalid command \n");
+
+	/* 1 - send the command */	
+	rxChar('#');
+	rxChar('x');
+	rxChar('1');
+	rxChar('2');
+	rxChar('0');
+	rxChar('!');
+		
+	/* 2 - Process the comand and check the answer */
+	err=cmdProcessor();
+	printf("err = %d\n", err);
+	
+	if(err == -2) {
+		printf("Test 3 succeeded, as invalid command was detected\n");
+	} else {
+		printf("Test 3 failed, as invalid command was not detected\n");
+	}
 	
 	return 0;
 }
