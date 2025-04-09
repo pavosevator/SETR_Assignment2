@@ -86,10 +86,10 @@ int main(void)
 	err=cmdProcessor();
 	printf("err = %d\n", err);
 
-	if(err == -4) {
-		printf("Test 2 succeeded, as omission was detected - checksum was appropriate\n");
+	if(err == CMD_CS_ERROR) {
+		printf("Test 2 succeeded, as omission was detected - checksum was not appropriate\n");
 	} else {
-		printf("Test 2 failed, as omission was not detected - was not appropriate\n");
+		printf("Test 2 failed, as omission was not detected - checksum was appropriate\n");
 	}		
 	
 	
@@ -109,7 +109,7 @@ int main(void)
 	err=cmdProcessor();
 	printf("err = %d\n", err);
 	
-	if(err == -2) {
+	if(err == CMD_INVALID) {
 		printf("Test 3 succeeded, as invalid command was detected\n");
 	} else {
 		printf("Test 3 failed, as invalid command was not detected\n");

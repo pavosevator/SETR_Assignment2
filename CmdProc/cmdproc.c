@@ -54,10 +54,10 @@ int cmdProcessor(void)
 	int sofIndex;
 	int eofIndex;
 
-	if(checkSofEof(&sofIndex, &eofIndex) != CMD_EMPTY_STRING) 
+	if(checkSofEof(&sofIndex, &eofIndex) == CMD_EMPTY_STRING) 
 		return CMD_EMPTY_STRING;  // empty string
 
-	if(checkSofEof(&sofIndex, &eofIndex) != CMD_FORMAT_ERROR) 
+	if(checkSofEof(&sofIndex, &eofIndex) == CMD_FORMAT_ERROR) 
 		return CMD_FORMAT_ERROR; 	// # or ! not found	
 	
 	int frameLen, newLen;
@@ -210,7 +210,7 @@ int cmdProcessor(void)
 			default:
 				/* If code reaches this place, the command is not recognized */
 				// delete leftover of command
-				printf("Check this: %s", UARTRxBuffer);
+				printf("\nCheck this: %s\n", UARTRxBuffer);
 				frameLen = eofIndex - sofIndex + 1;
 				newLen = rxBufLen - frameLen;
 				memset(UARTRxBuffer	, '\0', frameLen);
