@@ -1,17 +1,3 @@
-/* ******************************************************/
-/* SETR 23/24, Paulo Pedreiras                          */
-/*	Base code for Unit Testing                          */
-/*  	Simple example of command processor             */
-/*    	for smart sensor node with 3 sensors			*/
-/*     													*/
-/*	Code is just for illustrative effects. E.g. error 	*/ 
-/*		codes are "magic numbers" in the middle of the	*/
-/*    	code instead of being (defined) text literals, 	*/
-/* 		sensor data is not properly emulated, missing 	*/
-/* 		commands, Checksum not implemented, ...			*/
-/*														*/
-/* ******************************************************/
-
 /**
  * @file cmdproc.h
  * @brief Header file for command processor module for smart sensor node.
@@ -140,20 +126,6 @@
  */
 #define CMD_BUFFER_EMPTY -7
 
-/**
- * @enum UART_State_t
- * @brief UART state machine states.
- */
-typedef enum{
-    UART_STATE_IDLE,
-    UART_STATE_BUSY,
-    UART_STATE_DATA_READY,
-    UART_STATE_RECEIVING,
-    UART_STATE_TRANSMITING,
-    UART_STATE_COMPLETE,
-    UART_STATE_ERROR
-} UART_State_t;
-
 /* Function prototypes */
 
 
@@ -217,14 +189,20 @@ void resetTxBuffer(void);
  */
 void getTxBuffer(unsigned char * buf, int * len);
 
-/* ************************************************ */
-/* Computes the checksum of a given number of chars */
-/* ************************************************ */ 
+/**
+ * @brief Calculates the checksum of given payload defined from buffer for n number of bytes.
+ *
+ * @param buffer Buffer for which payload calculation is needed.
+ * @param nbytes Number of bytes of the payload
+ */
 int calcChecksum(unsigned char * buffer, int nbytes);
 
-/* ************************************************ */
-/* Checks the checksum of a rx buffer               */
-/* ************************************************ */ 
+/**
+ * @brief Compares checksum from received frame with calculated checksum to check if message was received completely.
+ *
+ * @param sofIndex Position of start of frame symbol.
+ * @param eofIndex Position of end of frame symbol.
+ */
 int checkRxChecksum(int * sofIndex, int * eofIndex);
 
 /**

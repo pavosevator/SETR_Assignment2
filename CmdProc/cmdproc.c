@@ -25,10 +25,6 @@ static unsigned char cHistoryLen = 0;
 /* Define seed for use of pseudo random value generator */
 static unsigned int seed = 1;
 
-/* UART communication is defined with state machines, for Rx and Tx separately */
-static UART_State_t stateRx = UART_STATE_IDLE;
-static UART_State_t stateTx = UART_STATE_IDLE;
-
 /* Function implementation */
 
 /* 
@@ -203,9 +199,30 @@ int cmdProcessor(void)
 				memset(UARTRxBuffer + newLen, '\0', frameLen);
 
 				return CMD_OK;
-			case 'L': // send back latest 20 results from history TO DO
+			case 'L': // send back latest 20 results from history
+				// TO DO
+				txChar('#');
+				txChar('l');
+				/* Send checksum */
+				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
+				for(int i = 0; i < CS_DIGITS; i++) {
+					txChar(checksumchar[i]);
+				}
+				txChar('!'); 
 				return CMD_OK;
-			case 'R': // reset the history TO DO
+			case 'R': // reset the history 
+				memset(tHistory	, '\0', HISTORY_SIZE);
+				memset(hHistory	, '\0', HISTORY_SIZE);
+				memset(cHistory	, '\0', HISTORY_SIZE);
+				txChar('#');
+				txChar('r');
+				/* Send checksum */
+				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
+				for(int i = 0; i < CS_DIGITS; i++) {
+					txChar(checksumchar[i]);
+				}
+				txChar('!');
+
 				return CMD_OK;			
 			default:
 				/* If code reaches this place, the command is not recognized */
@@ -312,11 +329,9 @@ int rxChar(unsigned char car)
 		rxBufLen += 1;
 		return 0;		
 	}	
-	/* If cmd string full return error */
-	stateRx = UART_STATE_ERROR;
 	/* Delete all wrong chars in buffer until reaching ! */
 	
-	return -1;
+	return CMD_BUFFER_FULL;
 }
 
 /*
@@ -331,7 +346,7 @@ int txChar(unsigned char car)
 		return 0;		
 	} else {
 		/* If cmd string full return error */
-		return -1;
+		return CMD_BUFFER_FULL;
 	} 
 }
 
@@ -348,9 +363,12 @@ void resetRxBuffer(void)
  * resetTxBuffer
  */
 void resetTxBuffer(void)
-{
-	//memset(UARTRxBuffer + newLen, '\0', frameLen);	
-	txBufLen = 0;	
+{	
+	if(txBufLen > 0) {
+		memset(UARTTxBuffer, '\0', UART_TX_SIZE);
+		txBufLen = 0;	
+	}
+	
 	return;
 }
 
@@ -423,4 +441,5 @@ void generateCharArray(char flag, int value, char* buffer) {
         default:
             buffer[0] = '\0';
     }
+	return;
 }
