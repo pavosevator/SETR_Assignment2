@@ -9,6 +9,26 @@ set(CMAKE_C_COMPILER "gcc")
 # Add MyDLL folder to the build
 add_subdirectory(CmdProc)
 
+##############################################################################
+# Add Unity framework
+add_subdirectory(Unity)
+include_directories(${CMAKE_SOURCE_DIR}/unity)
+
+# Add test executable
+set(TEST_SOURCES
+    ${SRC_DIR}/test_1.c  # Add your test source files here
+)
+
+add_executable(runTests ${TEST_SOURCES})
+
+# Link the test executable with the necessary libraries
+target_link_libraries(runTests PRIVATE ${EXTRA_LIBS} unity)
+
+# Add a test target to run the tests
+enable_testing()
+add_test(NAME AllTests COMMAND runTests)
+##############################################################################
+
 # Generate variables with set of libs and include folders
 # Dependencies are automatically set
 list(APPEND EXTRA_LIBS CmdProcLib)
