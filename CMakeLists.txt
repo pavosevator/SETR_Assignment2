@@ -16,7 +16,7 @@ include_directories(${CMAKE_SOURCE_DIR}/unity)
 
 # Add test executable
 set(TEST_SOURCES
-    ${SRC_DIR}/test_1.c  # Add your test source files here
+    ${SRC_DIR}/tests/test_1.c  # Add your test source files here
 )
 
 add_executable(runTests ${TEST_SOURCES})
