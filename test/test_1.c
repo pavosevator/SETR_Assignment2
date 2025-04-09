@@ -5,16 +5,12 @@ extern unsigned char UARTRxBuffer[UART_RX_SIZE];
 extern unsigned char UARTTxBuffer[UART_TX_SIZE];
 extern int rxBufLen;
 extern int txBufLen;
-extern UART_State_t stateRx;
-extern UART_State_t stateTx;
 
 //Configuration
 void setUp(void) {
     // Initialisation
     rxBufLen = 0;
     txBufLen = 0;
-    stateRx = UART_STATE_IDLE;
-    stateTx = UART_STATE_IDLE;
     memset(UARTRxBuffer, 0, UART_RX_SIZE);
     memset(UARTTxBuffer, 0, UART_TX_SIZE);
 }
