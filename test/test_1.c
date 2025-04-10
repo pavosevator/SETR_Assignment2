@@ -7,7 +7,7 @@ void setUp(void) {
     rxBufLen = 0;
     txBufLen = 0;
     memset(UARTRxBuffer, '0', UART_RX_SIZE);
-    memset(UARTTxBuffer, '0', UART_TX_SIZE);
+    memset(UARTTxBuffer, '\0', UART_TX_SIZE);
 }
 
 //Clear
@@ -141,6 +141,9 @@ void test_checkCommand_ShouldReportInvalidFormatOfFrame(void) {
 
 // Test command A if it outputs right results
 void test_checkCommand_A_ShouldReportCorrectValue(void) {
+    printf("%s\n", UARTTxBuffer);
+    resetRxBuffer();
+    resetTxBuffer();
     rxChar('#');
     rxChar('A');
     rxChar('0');
