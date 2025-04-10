@@ -350,7 +350,11 @@ int txChar(unsigned char car)
  */
 void resetRxBuffer(void)
 {
-	rxBufLen = 0;		
+	if(rxBufLen > 0) {
+		memset(UARTRxBuffer, '\0', UART_TX_SIZE);
+		rxBufLen = 0;	
+	}
+			
 	return;
 }
 

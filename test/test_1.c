@@ -27,12 +27,13 @@ void test_rxChar_ShouldReturnErrorWhenBufferFull(void) {
     for (int i = 0; i < UART_RX_SIZE; i++) {
         rxChar('A');
     }
-    TEST_ASSERT_EQUAL(-1, rxChar('A'));
+    TEST_ASSERT_EQUAL(CMD_BUFFER_FULL, rxChar('A'));
 }
 
 // Test function txChar
 void test_txChar_ShouldAddCharToBuffer(void) {
     int result = txChar('#');
+    TEST_ASSERT_EQUAL(0, result);
     TEST_ASSERT_EQUAL(1, txBufLen);
     TEST_ASSERT_EQUAL('#', UARTTxBuffer[0]);
 }
@@ -42,7 +43,7 @@ void test_txChar_ShouldReturnErrorWhenBufferFull(void) {
     for (int i = 0; i < UART_TX_SIZE; i++) {
         txChar('A');
     }
-    TEST_ASSERT_EQUAL(-1, txChar('A'));
+    TEST_ASSERT_EQUAL(CMD_BUFFER_FULL, txChar('A'));
 }
 
 // Test function resetRxBuffer
@@ -50,6 +51,7 @@ void test_resetRxBuffer_ShouldResetRxBuffer(void) {
     rxChar('A');
     resetRxBuffer();
     TEST_ASSERT_EQUAL(0, rxBufLen);
+    TEST_ASSERT_EQUAL('\0', UARTRxBuffer[0]);
 }
 
 // Test function resetTxBuffer
@@ -57,6 +59,7 @@ void test_resetTxBuffer_ShouldResetTxBuffer(void) {
     txChar('A');
     resetTxBuffer();
     TEST_ASSERT_EQUAL(0, txBufLen);
+    TEST_ASSERT_EQUAL('\0', UARTRxBuffer[0]);
 }
 
 // Test function generateCharArray
