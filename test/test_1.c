@@ -187,7 +187,7 @@ void test_checkCommand_P_ShouldReportCorrectValue(void) {
     TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest1, 17)); // memcmp returns 0 if strings are equal
 }
 
-void test_checkCommand_P_ShouldReportCorrectValue(void) {
+void test_checkCommand_L(void) {
     printf("%s\n", UARTTxBuffer);
     resetRxBuffer();
     resetTxBuffer();
@@ -218,5 +218,6 @@ int main(void) {
     RUN_TEST(test_checkCommand_ShouldReportInvalidFormatOfFrame);
     RUN_TEST(test_checkCommand_A_ShouldReportCorrectValue);
 	RUN_TEST(test_checkCommand_P_ShouldReportCorrectValue);
+    RUN_TEST(test_checkCommand_L);
     return UNITY_END();
 }
