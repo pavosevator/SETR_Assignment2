@@ -48,20 +48,23 @@ int cmdProcessor(void)
 	if(checkSofEof(&sofIndex, &eofIndex) == CMD_EMPTY_STRING) 
 		return CMD_EMPTY_STRING;  // empty string
 
-	if(checkSofEof(&sofIndex, &eofIndex) == CMD_FORMAT_ERROR) 
-		return CMD_FORMAT_ERROR; 	// # or ! not found	
+	if(checkSofEof(&sofIndex, &eofIndex) == CMD_MISSING_SOF_ERROR) 
+		return CMD_MISSING_SOF_ERROR; 	// # not found	
+	
+	if(checkSofEof(&sofIndex, &eofIndex) == CMD_MISSING_EOF_ERROR) 
+		return CMD_MISSING_EOF_ERROR; 	// ! not found	
 	
 	int frameLen, newLen;
 	/* Check if frame has valid checksum*/
 	if(checkRxChecksum(&sofIndex, &eofIndex) == CMD_OK) {
-		printf("SOF: %d\n", sofIndex);
-		printf("EOF:%d\n", eofIndex);
 		
 
 		switch(UARTRxBuffer[sofIndex+1]) { 
 			
 			case 'A': /*  reads the real-time values of the variables provided by the sensor */
-
+				if((eofIndex - sofIndex + 1)  != RX_CMD_A_LEN) {
+					return CMD_INVALID;
+				}
 				/* Sending of the data */
 				/* Emulate pseudo random generation of sensor outputs */
 				temp = (signed char)psrnd(-50,60);
@@ -119,7 +122,7 @@ int cmdProcessor(void)
 				memmove(UARTRxBuffer, UARTRxBuffer + frameLen, newLen);
 				rxBufLen = newLen;
 
-				memset(UARTRxBuffer + newLen, '\0', frameLen);
+				memset(UARTRxBuffer + newLen, '0', frameLen);
 				/*
 				for(int j = eofIndex; j <= rxBufLen; j++){
 					UARTRxBuffer[j - eofIndex - 1] = UARTRxBuffer[j];
@@ -191,7 +194,7 @@ int cmdProcessor(void)
 				rxBufLen = newLen;
 
 				// Clear the rest of the buffer
-				memset(UARTRxBuffer + newLen, '\0', frameLen);
+				memset(UARTRxBuffer + newLen, '0', frameLen);
 
 				return CMD_OK;
 			case 'L': // send back latest 20 results from history
@@ -222,19 +225,21 @@ int cmdProcessor(void)
 			default:
 				/* If code reaches this place, the command is not recognized */
 				// delete leftover of command
-				printf("\nCheck this: %s\n", UARTRxBuffer);
 				frameLen = eofIndex - sofIndex + 1;
 				newLen = rxBufLen - frameLen;
-				memset(UARTRxBuffer	, '\0', frameLen);
+				memmove(UARTRxBuffer, UARTRxBuffer + frameLen, newLen);
+				rxBufLen = newLen;
+				memset(UARTRxBuffer	+ newLen, '0', frameLen);
 				return CMD_INVALID;				
 		}
 		
 		
 	}
-	printf("Check this: %s", UARTRxBuffer);
 	frameLen = eofIndex - sofIndex + 1;
 	newLen = rxBufLen - frameLen;
-	memset(UARTRxBuffer	, '\0', frameLen);
+	memmove(UARTRxBuffer, UARTRxBuffer + frameLen, newLen);
+	rxBufLen = newLen;
+	memset(UARTRxBuffer	+ newLen, '0', frameLen);
 	return CMD_CS_ERROR; // checksum not aligning
 
 }
@@ -256,7 +261,7 @@ int checkSofEof(int * sofIndex, int * eofIndex)
 			break;
 		}
 	}
-	if(sof == -1) return CMD_FORMAT_ERROR; // '#' not found
+	if(sof == -1) return CMD_MISSING_SOF_ERROR; // '#' not found
 
 	/* Find index of EOF */
 	for(int j = sof; j < rxBufLen; j++) {	
@@ -265,7 +270,7 @@ int checkSofEof(int * sofIndex, int * eofIndex)
 			break;
 		}
 	}
-	if(eof == -1) return CMD_FORMAT_ERROR; // '!' not found
+	if(eof == -1) return CMD_MISSING_EOF_ERROR; // '!' not found
 	
 	*sofIndex = sof;
 	*eofIndex = eof;
@@ -323,9 +328,7 @@ int rxChar(unsigned char car)
 		UARTRxBuffer[rxBufLen] = car;
 		rxBufLen += 1;
 		return 0;		
-	}	
-	/* Delete all wrong chars in buffer until reaching ! */
-	
+	}
 	return CMD_BUFFER_FULL;
 }
 
@@ -351,7 +354,7 @@ int txChar(unsigned char car)
 void resetRxBuffer(void)
 {
 	if(rxBufLen > 0) {
-		memset(UARTRxBuffer, '\0', UART_TX_SIZE);
+		memset(UARTRxBuffer, '0', UART_TX_SIZE);
 		rxBufLen = 0;	
 	}
 			
@@ -364,7 +367,7 @@ void resetRxBuffer(void)
 void resetTxBuffer(void)
 {	
 	if(txBufLen > 0) {
-		memset(UARTTxBuffer, '\0', UART_TX_SIZE);
+		memset(UARTTxBuffer, '0', UART_TX_SIZE);
 		txBufLen = 0;	
 	}
 	
@@ -438,7 +441,7 @@ void generateCharArray(char flag, int value, char* buffer) {
             snprintf(buffer, 6, "%05d", value);
             break;
         default:
-            buffer[0] = '\0';
+            buffer[0] = '0';
     }
 	return;
 }

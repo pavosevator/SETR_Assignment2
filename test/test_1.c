@@ -6,8 +6,8 @@ void setUp(void) {
     // Initialisation
     rxBufLen = 0;
     txBufLen = 0;
-    memset(UARTRxBuffer, '\0', UART_RX_SIZE);
-    memset(UARTTxBuffer, '\0', UART_TX_SIZE);
+    memset(UARTRxBuffer, '0', UART_RX_SIZE);
+    memset(UARTTxBuffer, '0', UART_TX_SIZE);
 }
 
 //Clear
@@ -51,7 +51,7 @@ void test_resetRxBuffer_ShouldResetRxBuffer(void) {
     rxChar('A');
     resetRxBuffer();
     TEST_ASSERT_EQUAL(0, rxBufLen);
-    TEST_ASSERT_EQUAL('\0', UARTRxBuffer[0]);
+    TEST_ASSERT_EQUAL('0', UARTRxBuffer[0]);
 }
 
 // Test function resetTxBuffer
@@ -59,7 +59,7 @@ void test_resetTxBuffer_ShouldResetTxBuffer(void) {
     txChar('A');
     resetTxBuffer();
     TEST_ASSERT_EQUAL(0, txBufLen);
-    TEST_ASSERT_EQUAL('\0', UARTRxBuffer[0]);
+    TEST_ASSERT_EQUAL('0', UARTRxBuffer[0]);
 }
 
 // Test function generateCharArray
@@ -83,6 +83,62 @@ void test_generateCharArray_ShouldGenerateCorrectArrayForCO2(void) {
     TEST_ASSERT_EQUAL_STRING("01200", buffer);
 }
 
+// Test empty string
+void test_checkRxChecksum_ShouldReportEmptyString(void) {
+    TEST_ASSERT_EQUAL(CMD_EMPTY_STRING, cmdProcessor());
+    rxChar('#');
+    resetRxBuffer();
+    TEST_ASSERT_EQUAL(CMD_EMPTY_STRING, cmdProcessor());
+}
+
+// Test that command is missing start of frame symbol
+void test_checkCommand_ShouldReportMissingSof(void) {
+    rxChar('A');
+    rxChar('!');
+    TEST_ASSERT_EQUAL(CMD_MISSING_SOF_ERROR, cmdProcessor());
+}
+
+// Test that command is missing start of frame symbol
+void test_checkCommand_ShouldReportMissingEof(void) {
+    rxChar('#');
+    rxChar('A');
+    TEST_ASSERT_EQUAL(CMD_MISSING_EOF_ERROR, cmdProcessor());
+}
+
+// Test function checkRxChecksum
+void test_checkRxChecksum_ShouldReportWrongChecksum(void) {
+    rxChar('#');
+    rxChar('A');
+    rxChar('0');
+    rxChar('0');
+    rxChar('0');
+    rxChar('!');
+    TEST_ASSERT_EQUAL(CMD_CS_ERROR, cmdProcessor());
+}
+
+// Test correct checksum but wrong command
+void test_checkCommand_ShouldReportWrongCommand(void) {
+    rxChar('#');
+    rxChar('B');
+    rxChar('0');
+    rxChar('6');
+    rxChar('6');
+    rxChar('!');
+    TEST_ASSERT_EQUAL(CMD_INVALID, cmdProcessor());
+}
+
+// Test correct checksum but wrong format of the command
+void test_checkCommand_ShouldReportInvalidFormatOfFrame(void) {
+    rxChar('#');
+    rxChar('A');
+    rxChar('x');
+    rxChar('1');
+    rxChar('8');
+    rxChar('5'); // 'A' + 'x' = (ASCII) dec. 185, checksum is OK
+    rxChar('!');
+    TEST_ASSERT_EQUAL(CMD_INVALID, cmdProcessor());
+}
+
 // RUN TESTS
 int main(void) {
     UNITY_BEGIN();
@@ -95,5 +151,11 @@ int main(void) {
     RUN_TEST(test_generateCharArray_ShouldGenerateCorrectArrayForTemperature);
     RUN_TEST(test_generateCharArray_ShouldGenerateCorrectArrayForHumidity);
     RUN_TEST(test_generateCharArray_ShouldGenerateCorrectArrayForCO2);
+    RUN_TEST(test_checkRxChecksum_ShouldReportEmptyString);
+    RUN_TEST(test_checkCommand_ShouldReportMissingSof);
+    RUN_TEST(test_checkCommand_ShouldReportMissingEof);
+    RUN_TEST(test_checkRxChecksum_ShouldReportWrongChecksum);
+    RUN_TEST(test_checkCommand_ShouldReportWrongCommand);
+    RUN_TEST(test_checkCommand_ShouldReportInvalidFormatOfFrame);
     return UNITY_END();
 }

@@ -108,12 +108,32 @@ int main(void)
 	/* 2 - Process the comand and check the answer */
 	err=cmdProcessor();
 	printf("err = %d\n", err);
+	printf("\nShould be zeros: %s\n", UARTRxBuffer);
 	
 	if(err == CMD_INVALID) {
 		printf("Test 3 succeeded, as invalid command was detected\n");
 	} else {
 		printf("Test 3 failed, as invalid command was not detected\n");
 	}
+
+	/* TEST 4 - sending invalid command with okay checksum */
+
+	printf("\nTest4 - check the answer to an invalid command \n");
 	
+	rxChar('#');
+	rxChar('A');
+	rxChar('x');
+	rxChar('1');
+	rxChar('8');
+	rxChar('5');
+	rxChar('!');
+
+	printf("\nAH MERAKA4: %s\n", UARTRxBuffer);
+
+	printf("\nALO BA: %d", cmdProcessor());
+	printf("\nALO BA2: %s", UARTTxBuffer);
+
+	printf("\nAH MERAKA5: %s\n", UARTRxBuffer);
+
 	return 0;
 }

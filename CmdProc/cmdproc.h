@@ -78,8 +78,14 @@
 #define CS_DIGITS 3       
 
 /**
+ * @def RX_CMD_A_LEN
+ * @brief Length of the received message = 6 (SOF_SYM + 'A' + 3 digit checksum + EOF_SYM).
+ */
+#define RX_CMD_A_LEN 6
+
+/**
  * @def A_RESPONSE_PAYLOAD_LEN
- * @brief Length of the answer payload + 4 letters hardcoded (a, t, h, c).
+ * @brief Length of the answer payload = all digits for t,h,c + 4 letters hardcoded (a, t, h, c).
  */
 #define A_RESPONSE_PAYLOAD_LEN (T_DIGITS + H_DIGITS + C_DIGITS + CS_DIGITS + 4) 
 
@@ -98,40 +104,40 @@
 #define CMD_EMPTY_STRING -1
 
 /**
- * @def CMD_INCOMPLETE
- * @brief Incomplete command error.
- */
-#define CMD_INCOMPLETE -2
-
-/**
  * @def CMD_INVALID
  * @brief Invalid command error.
  */
-#define CMD_INVALID -3
+#define CMD_INVALID -2
 
 /**
  * @def CMD_CS_ERROR
  * @brief Checksum error.
  */
-#define CMD_CS_ERROR -4
-
-/**
- * @def CMD_FORMAT_ERROR
- * @brief String format error.
- */
-#define CMD_FORMAT_ERROR -5
+#define CMD_CS_ERROR -3
 
 /**
  * @def CMD_BUFFER_FULL
  * @brief Buffer full error.
  */
-#define CMD_BUFFER_FULL -6
+#define CMD_BUFFER_FULL -4
 
 /**
  * @def CMD_BUFFER_EMPTY
  * @brief Buffer empty error.
  */
-#define CMD_BUFFER_EMPTY -7
+#define CMD_BUFFER_EMPTY -5
+
+/**
+ * @def CMD_MISSING_SOF_ERROR
+ * @brief Missing start of frame ('#') error.
+ */
+#define CMD_MISSING_SOF_ERROR -6
+
+/**
+ * @def CMD_MISSING_EOF_ERROR
+ * @brief Missing start of frame ('!') error.
+ */
+#define CMD_MISSING_EOF_ERROR -7
 
 /* Extern variables for unity tests */
 extern unsigned char UARTRxBuffer[];
