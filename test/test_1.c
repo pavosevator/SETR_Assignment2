@@ -155,18 +155,16 @@ void test_checkCommand_A_ShouldReportCorrectValue(void) {
     int len;
 	unsigned char ans[30];
     getTxBuffer(ans,&len);
-    unsigned char ansTest1[]={'#','a','t', '+', '1', '1', 'h', '0', '8','3', 'c','0','0','9','9','5', '2', '4','2', '!','\0'};
+    unsigned char ansTest1[]={'#','a','t', '+', '1', '1', 'h', '0', '8','3', 'c','0','0','9','9','5', '2', '0','7', '!','\0'};
 
     printf("Evo banke: %s\n",ans);
     printf("Evo banke: %s\n",ansTest1);
 
-    TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest1, 17)); // memcmp returns 0 if strings are equal
+    TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest1, len)); // memcmp returns 0 if strings are equal
 }
 
 void test_checkCommand_P_ShouldReportCorrectValue(void) {
-    printf("%s\n", UARTTxBuffer);
-    resetRxBuffer();
-    resetTxBuffer();
+    seed = 1; // without this psrnd functions uses newer seed, this resets the value to default one
     rxChar('#');
 	rxChar('P');
 	rxChar('t'); 
@@ -179,15 +177,15 @@ void test_checkCommand_P_ShouldReportCorrectValue(void) {
     int len;
 	unsigned char ans[30];
     getTxBuffer(ans,&len);
-    unsigned char ansTest1[]={'#','p','t', '+', '1', '1', '!','\0'};
+    unsigned char ansTest2[]={'#','p','t', '+', '1', '1', '1', '1', '3', '!','\0'};
 
     printf("Evo banke: %s\n",ans);
-    printf("Evo banke: %s\n",ansTest1);
+    printf("Evo banke: %s\n",ansTest2);
 
-    TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest1, 17)); // memcmp returns 0 if strings are equal
+    TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest2, len)); // memcmp returns 0 if strings are equal
 }
 
-void test_checkCommand_L(void) {
+void test_checkCommand_L(void) { // this command should be implemented
     printf("%s\n", UARTTxBuffer);
     resetRxBuffer();
     resetTxBuffer();

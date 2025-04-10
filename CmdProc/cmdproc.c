@@ -108,7 +108,7 @@ int cmdProcessor(void)
 				}
 				
 				// Send checksum
-				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer, A_RESPONSE_PAYLOAD_LEN)); // what if buffer is not start of frame + 1 
+				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer + 1, A_RESPONSE_PAYLOAD_LEN)); // what if buffer is not start of frame + 1 
 				for(int j = 0; j < CS_DIGITS; j++){
 					txChar(checksumchar[j]);
 				}
@@ -174,12 +174,12 @@ int cmdProcessor(void)
 				txChar(sid);
 
 				/* Send data */
-				for(int i = 0; i < strlen(outputChar) - 1; i++) {
+				for(int i = 0; i < strlen(outputChar); i++) {
 					txChar(outputChar[i]);
 				}
 
 				/* Send checksum */
-				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
+				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer + 1, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
 				for(int i = 0; i < CS_DIGITS; i++) {
 					txChar(checksumchar[i]);
 				}
@@ -202,7 +202,7 @@ int cmdProcessor(void)
 				txChar('#');
 				txChar('l');
 				/* Send checksum */
-				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
+				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer + 1, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
 				for(int i = 0; i < CS_DIGITS; i++) {
 					txChar(checksumchar[i]);
 				}
@@ -215,7 +215,7 @@ int cmdProcessor(void)
 				txChar('#');
 				txChar('r');
 				/* Send checksum */
-				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
+				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer + 1, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
 				for(int i = 0; i < CS_DIGITS; i++) {
 					txChar(checksumchar[i]);
 				}
