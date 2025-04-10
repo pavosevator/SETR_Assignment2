@@ -206,16 +206,35 @@ int cmdProcessor(void)
 				if(sid != 't' && sid != 'h' && sid != 'c') {
 					return CMD_INVALID;
 				} 
+				
+				// Initialize index for historyChar
+				int historyIndex = 0;
 
 				if(sid == 't'){
-					// loop that goes in history and sends the last 20 results, big history size no need for circular buffer going
-					//store in historyChar
-				} else if(sid == 'h'){
-					// loop that goes in history and sends the last 20 results, big history size no need for circular buffer going
-				} else if(sid == 'c'){
-					// loop that goes in history and sends the last 20 results, big history size no need for circular buffer going
-				} 
+					// Loop through temperature history and store the last 20 results
+					for (int i = 0; i < 20; i++) {
+						int valueIndex = tHistoryLen - 1 - i; // Direct index from the end
+						generateCharArray('t', tHistory[valueIndex], historyChar + historyIndex);
+						historyIndex += T_DIGITS + 1; // Move index by the size of temperature data
+					}
 
+				} else if(sid == 'h'){
+					// Loop through humidity history and store the last 20 results
+        			for (int i = 0; i < 20; i++) {
+           				int valueIndex = hHistoryLen - 1 - i; // Direct index from the end
+           		 		generateCharArray('h', hHistory[valueIndex], historyChar + historyIndex);
+            			historyIndex += H_DIGITS + 1; // Move index by the size of humidity data
+					}
+
+				} else if(sid == 'c'){
+					// Loop through CO2 history and store the last 20 results
+        			for (int i = 0; i < 20; i++) {
+           				int valueIndex = cHistoryLen - 1 - i; // Direct index from the end
+            			generateCharArray('c', cHistory[valueIndex], historyChar + historyIndex);
+            			historyIndex += C_DIGITS + 1; // Move index by the size of CO2 data
+        			}
+				}
+				
 				txChar('#');
 				txChar('l');
 				txChar(sid);

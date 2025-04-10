@@ -191,6 +191,7 @@ void test_checkCommand_L(void) { // this command should be implemented
     resetTxBuffer();
     rxChar('#');
 	rxChar('L');
+    rxChar('c');
 	rxChar('!');
     TEST_ASSERT_EQUAL(CMD_OK, cmdProcessor());
 
