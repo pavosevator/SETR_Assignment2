@@ -117,7 +117,7 @@ void test_checkRxChecksum_ShouldReportWrongChecksum(void) {
 }
 
 // Test correct checksum but wrong command
-void test_checkCommand_ShouldReportWrongCommand(void) {
+void test_checkCommand_ShouldReportWrongCommandWithCorrectChecksum(void) {
     rxChar('#');
     rxChar('B');
     rxChar('0');
@@ -139,6 +139,27 @@ void test_checkCommand_ShouldReportInvalidFormatOfFrame(void) {
     TEST_ASSERT_EQUAL(CMD_INVALID, cmdProcessor());
 }
 
+// Test command A if it outputs right results
+void test_checkCommand_A_ShouldReportCorrectValue(void) {
+    rxChar('#');
+    rxChar('A');
+    rxChar('0');
+    rxChar('6');
+    rxChar('5'); 
+    rxChar('!');
+    TEST_ASSERT_EQUAL(CMD_OK, cmdProcessor());
+
+    int len;
+	unsigned char ans[30];
+    getTxBuffer(ans,&len);
+    unsigned char ansTest1[]={'#','a','t', '+', '1', '1', 'h', '0', '8','3', 'c','0','0','9','9','5', '2', '4','2', '!','\0'};
+
+    printf("Evo banke: %s\n",ans);
+    printf("Evo banke: %s\n",ansTest1);
+
+    TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest1, 17)); // memcmp returns 0 if strings are equal
+}
+
 // RUN TESTS
 int main(void) {
     UNITY_BEGIN();
@@ -155,7 +176,8 @@ int main(void) {
     RUN_TEST(test_checkCommand_ShouldReportMissingSof);
     RUN_TEST(test_checkCommand_ShouldReportMissingEof);
     RUN_TEST(test_checkRxChecksum_ShouldReportWrongChecksum);
-    RUN_TEST(test_checkCommand_ShouldReportWrongCommand);
+    RUN_TEST(test_checkCommand_ShouldReportWrongCommandWithCorrectChecksum);
     RUN_TEST(test_checkCommand_ShouldReportInvalidFormatOfFrame);
+    RUN_TEST(test_checkCommand_A_ShouldReportCorrectValue);
     return UNITY_END();
 }

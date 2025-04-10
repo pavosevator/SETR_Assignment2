@@ -18,7 +18,7 @@ unsigned char hHistoryLen = 0;
 unsigned char cHistoryLen = 0;
 
 /* Define seed for use of pseudo random value generator */
-static unsigned int seed = 1;
+unsigned int seed = 1;
 
 /* Function implementation */
 

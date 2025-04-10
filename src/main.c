@@ -13,7 +13,7 @@ int main(void)
 {	
 	int i,len, err;
 	unsigned char ans[30]; 
-	unsigned char ansTest1[]={'#','a','t', '+', '1', '1', 'h', '0', '8','3', 'c','0','0','9','9','5', '2', '4','2', '!'};
+	unsigned char ansTest1[]={'#','a','t', '+', '1', '1', 'h', '0', '8','3', 'c','0','0','9','9','5', '2', '4','2', '!','\0'};
 	
 	printf("\n Smart Sensor interface emulation \n");
 	printf(" \t - simple illustration of interface and use \n\n\r");
@@ -53,6 +53,9 @@ int main(void)
 		printf("Test 1 failed\n");
 	} else {
 		printf("Test 1 succeeded - received and expected results are the same\n");
+		printf("Evo banke: %s\n",ans);
+		printf("%d\n",len);
+		printf("%d\n",strlen(ansTest1));
 	}	
 	
 	/* You can print the answer to see what is wrong, if necessary */
@@ -119,7 +122,7 @@ int main(void)
 	/* TEST 4 - sending invalid command with okay checksum */
 
 	printf("\nTest4 - check the answer to an invalid command \n");
-	
+
 	rxChar('#');
 	rxChar('A');
 	rxChar('x');

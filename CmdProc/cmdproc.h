@@ -144,7 +144,9 @@ extern unsigned char UARTRxBuffer[];
 extern unsigned char rxBufLen; 
 
 extern unsigned char UARTTxBuffer[];
-extern unsigned char txBufLen; 
+extern unsigned char txBufLen;
+
+extern unsigned int seed;
 
 /* Function prototypes */
 
