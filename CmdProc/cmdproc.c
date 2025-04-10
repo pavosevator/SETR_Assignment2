@@ -1,26 +1,21 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-
 #include "cmdproc.h"
 
 /* Internal variables */
 /* Used as part of the UART emulation */
-static unsigned char UARTRxBuffer[UART_RX_SIZE];
-static unsigned char rxBufLen = 0; 
+unsigned char UARTRxBuffer[UART_RX_SIZE];
+unsigned char rxBufLen = 0; 
 
-static unsigned char UARTTxBuffer[UART_TX_SIZE];
-static unsigned char txBufLen = 0; 
+unsigned char UARTTxBuffer[UART_TX_SIZE];
+unsigned char txBufLen = 0; 
 
 /* Used as part of storing history*/
 static signed char tHistory[HISTORY_SIZE];
 static unsigned char hHistory[HISTORY_SIZE];
 static unsigned int cHistory[HISTORY_SIZE];
 
-static unsigned char tHistoryLen = 0;
-static unsigned char hHistoryLen = 0;
-static unsigned char cHistoryLen = 0;
+unsigned char tHistoryLen = 0;
+unsigned char hHistoryLen = 0;
+unsigned char cHistoryLen = 0;
 
 /* Define seed for use of pseudo random value generator */
 static unsigned int seed = 1;

@@ -9,6 +9,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
   "C:/5g FER/embedded/Assignment2/SETR_Assignment2/CMakeLists.txt"
   "C:/5g FER/embedded/Assignment2/SETR_Assignment2/CmdProc/CMakeLists.txt"
+  "C:/5g FER/embedded/Assignment2/SETR_Assignment2/Unity/CMakeLists.txt"
   "CMakeFiles/3.31.5/CMakeCCompiler.cmake"
   "CMakeFiles/3.31.5/CMakeRCCompiler.cmake"
   "CMakeFiles/3.31.5/CMakeSystem.cmake"
@@ -48,10 +49,13 @@ set(CMAKE_MAKEFILE_OUTPUTS
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "CmdProc/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "Unity/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/cmdproc.dir/DependInfo.cmake"
+  "CMakeFiles/runTests.dir/DependInfo.cmake"
   "CmdProc/CMakeFiles/CmdProcLib.dir/DependInfo.cmake"
+  "Unity/CMakeFiles/UnityLib.dir/DependInfo.cmake"
   )

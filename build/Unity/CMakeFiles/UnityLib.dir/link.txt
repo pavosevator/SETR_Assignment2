@@ -1,0 +1,2 @@
+C:\mingw64\bin\ar.exe qc libUnityLib.a CMakeFiles/UnityLib.dir/unity.c.obj
+C:\mingw64\bin\ranlib.exe libUnityLib.a

@@ -12,6 +12,13 @@
 #ifndef CMD_PROC_H_
 #define CMD_PROC_H_
 
+/* Including libraries */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+
+
 /* Some defines */
 /* Other defines should be return codes of the functions */
 /* E.g. #define CMD_EMPTY_STRING -1                      */
@@ -125,6 +132,13 @@
  * @brief Buffer empty error.
  */
 #define CMD_BUFFER_EMPTY -7
+
+/* Extern variables for unity tests */
+extern unsigned char UARTRxBuffer[];
+extern unsigned char rxBufLen; 
+
+extern unsigned char UARTTxBuffer[];
+extern unsigned char txBufLen; 
 
 /* Function prototypes */
 

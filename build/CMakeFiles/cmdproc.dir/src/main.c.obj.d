@@ -14,4 +14,14 @@ CMakeFiles/cmdproc.dir/src/main.c.obj: \
  C:/mingw64/x86_64-w64-mingw32/include/string.h \
  C:/mingw64/x86_64-w64-mingw32/include/crtdefs.h \
  C:/mingw64/x86_64-w64-mingw32/include/sec_api/string_s.h \
- C:/5GFER~1/embedded/ASSIGN~2/SETR_A~1/CmdProc/cmdproc.h
+ C:/5GFER~1/embedded/ASSIGN~2/SETR_A~1/CmdProc/cmdproc.h \
+ C:/mingw64/x86_64-w64-mingw32/include/stdlib.h \
+ C:/mingw64/x86_64-w64-mingw32/include/corecrt_wstdlib.h \
+ C:/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/limits.h \
+ C:/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/syslimits.h \
+ C:/mingw64/x86_64-w64-mingw32/include/limits.h \
+ C:/mingw64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
+ C:/mingw64/x86_64-w64-mingw32/include/malloc.h \
+ C:/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mm_malloc.h \
+ C:/mingw64/x86_64-w64-mingw32/include/errno.h \
+ C:/mingw64/x86_64-w64-mingw32/include/math.h

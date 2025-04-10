@@ -96,14 +96,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" "C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\\CMakeFiles\progress.marks"
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 all
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(CMAKE_COMMAND) -E cmake_progress_start "C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" "C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\Unity\\CMakeFiles\progress.marks"
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Unity/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 clean
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Unity/clean
 .PHONY : clean
 
 # The main clean target
@@ -112,118 +112,56 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 preinstall
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Unity/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 preinstall
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Unity/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 1
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named cmdproc
+# Convenience name for target.
+Unity/CMakeFiles/UnityLib.dir/rule:
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Unity/CMakeFiles/UnityLib.dir/rule
+.PHONY : Unity/CMakeFiles/UnityLib.dir/rule
 
-# Build rule for target.
-cmdproc: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 cmdproc
-.PHONY : cmdproc
-
-# fast build rule for target.
-cmdproc/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\cmdproc.dir\build.make CMakeFiles/cmdproc.dir/build
-.PHONY : cmdproc/fast
-
-#=============================================================================
-# Target rules for targets named runTests
-
-# Build rule for target.
-runTests: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 runTests
-.PHONY : runTests
-
-# fast build rule for target.
-runTests/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\runTests.dir\build.make CMakeFiles/runTests.dir/build
-.PHONY : runTests/fast
-
-#=============================================================================
-# Target rules for targets named CmdProcLib
-
-# Build rule for target.
-CmdProcLib: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CmdProcLib
-.PHONY : CmdProcLib
-
-# fast build rule for target.
-CmdProcLib/fast:
-	$(MAKE) $(MAKESILENT) -f CmdProc\CMakeFiles\CmdProcLib.dir\build.make CmdProc/CMakeFiles/CmdProcLib.dir/build
-.PHONY : CmdProcLib/fast
-
-#=============================================================================
-# Target rules for targets named UnityLib
-
-# Build rule for target.
-UnityLib: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 UnityLib
+# Convenience name for target.
+UnityLib: Unity/CMakeFiles/UnityLib.dir/rule
 .PHONY : UnityLib
 
 # fast build rule for target.
 UnityLib/fast:
-	$(MAKE) $(MAKESILENT) -f Unity\CMakeFiles\UnityLib.dir\build.make Unity/CMakeFiles/UnityLib.dir/build
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(MAKE) $(MAKESILENT) -f Unity\CMakeFiles\UnityLib.dir\build.make Unity/CMakeFiles/UnityLib.dir/build
 .PHONY : UnityLib/fast
 
-src/main.obj: src/main.c.obj
-.PHONY : src/main.obj
+unity.obj: unity.c.obj
+.PHONY : unity.obj
 
 # target to build an object file
-src/main.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\cmdproc.dir\build.make CMakeFiles/cmdproc.dir/src/main.c.obj
-.PHONY : src/main.c.obj
+unity.c.obj:
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(MAKE) $(MAKESILENT) -f Unity\CMakeFiles\UnityLib.dir\build.make Unity/CMakeFiles/UnityLib.dir/unity.c.obj
+.PHONY : unity.c.obj
 
-src/main.i: src/main.c.i
-.PHONY : src/main.i
-
-# target to preprocess a source file
-src/main.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\cmdproc.dir\build.make CMakeFiles/cmdproc.dir/src/main.c.i
-.PHONY : src/main.c.i
-
-src/main.s: src/main.c.s
-.PHONY : src/main.s
-
-# target to generate assembly for a file
-src/main.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\cmdproc.dir\build.make CMakeFiles/cmdproc.dir/src/main.c.s
-.PHONY : src/main.c.s
-
-test/test_1.obj: test/test_1.c.obj
-.PHONY : test/test_1.obj
-
-# target to build an object file
-test/test_1.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\runTests.dir\build.make CMakeFiles/runTests.dir/test/test_1.c.obj
-.PHONY : test/test_1.c.obj
-
-test/test_1.i: test/test_1.c.i
-.PHONY : test/test_1.i
+unity.i: unity.c.i
+.PHONY : unity.i
 
 # target to preprocess a source file
-test/test_1.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\runTests.dir\build.make CMakeFiles/runTests.dir/test/test_1.c.i
-.PHONY : test/test_1.c.i
+unity.c.i:
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(MAKE) $(MAKESILENT) -f Unity\CMakeFiles\UnityLib.dir\build.make Unity/CMakeFiles/UnityLib.dir/unity.c.i
+.PHONY : unity.c.i
 
-test/test_1.s: test/test_1.c.s
-.PHONY : test/test_1.s
+unity.s: unity.c.s
+.PHONY : unity.s
 
 # target to generate assembly for a file
-test/test_1.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\runTests.dir\build.make CMakeFiles/runTests.dir/test/test_1.c.s
-.PHONY : test/test_1.c.s
+unity.c.s:
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(MAKE) $(MAKESILENT) -f Unity\CMakeFiles\UnityLib.dir\build.make Unity/CMakeFiles/UnityLib.dir/unity.c.s
+.PHONY : unity.c.s
 
 # Help Target
 help:
@@ -234,16 +172,10 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... test
-	@echo ... CmdProcLib
 	@echo ... UnityLib
-	@echo ... cmdproc
-	@echo ... runTests
-	@echo ... src/main.obj
-	@echo ... src/main.i
-	@echo ... src/main.s
-	@echo ... test/test_1.obj
-	@echo ... test/test_1.i
-	@echo ... test/test_1.s
+	@echo ... unity.obj
+	@echo ... unity.i
+	@echo ... unity.s
 .PHONY : help
 
 
@@ -255,6 +187,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 0
+	cd /d C:\5GFER~1\embedded\ASSIGN~2\SETR_A~1\build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

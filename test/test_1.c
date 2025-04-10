@@ -1,18 +1,13 @@
 #include "unity.h"
 #include "cmdproc.h"
 
-extern unsigned char UARTRxBuffer[UART_RX_SIZE];
-extern unsigned char UARTTxBuffer[UART_TX_SIZE];
-extern int rxBufLen;
-extern int txBufLen;
-
 //Configuration
 void setUp(void) {
     // Initialisation
     rxBufLen = 0;
     txBufLen = 0;
-    memset(UARTRxBuffer, 0, UART_RX_SIZE);
-    memset(UARTTxBuffer, 0, UART_TX_SIZE);
+    memset(UARTRxBuffer, '\0', UART_RX_SIZE);
+    memset(UARTTxBuffer, '\0', UART_TX_SIZE);
 }
 
 //Clear

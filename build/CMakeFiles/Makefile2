@@ -63,21 +63,28 @@ CMAKE_BINARY_DIR = "C:\5g FER\embedded\Assignment2\SETR_Assignment2\build"
 
 # The main recursive "all" target.
 all: CMakeFiles/cmdproc.dir/all
+all: CMakeFiles/runTests.dir/all
 all: CmdProc/all
+all: Unity/all
 .PHONY : all
 
 # The main recursive "codegen" target.
 codegen: CMakeFiles/cmdproc.dir/codegen
+codegen: CMakeFiles/runTests.dir/codegen
 codegen: CmdProc/codegen
+codegen: Unity/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
 preinstall: CmdProc/preinstall
+preinstall: Unity/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/cmdproc.dir/clean
+clean: CMakeFiles/runTests.dir/clean
 clean: CmdProc/clean
+clean: Unity/clean
 .PHONY : clean
 
 #=============================================================================
@@ -100,13 +107,32 @@ CmdProc/clean: CmdProc/CMakeFiles/CmdProcLib.dir/clean
 .PHONY : CmdProc/clean
 
 #=============================================================================
+# Directory level rules for directory Unity
+
+# Recursive "all" directory target.
+Unity/all: Unity/CMakeFiles/UnityLib.dir/all
+.PHONY : Unity/all
+
+# Recursive "codegen" directory target.
+Unity/codegen: Unity/CMakeFiles/UnityLib.dir/codegen
+.PHONY : Unity/codegen
+
+# Recursive "preinstall" directory target.
+Unity/preinstall:
+.PHONY : Unity/preinstall
+
+# Recursive "clean" directory target.
+Unity/clean: Unity/CMakeFiles/UnityLib.dir/clean
+.PHONY : Unity/clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/cmdproc.dir
 
 # All Build rule for target.
 CMakeFiles/cmdproc.dir/all: CmdProc/CMakeFiles/CmdProcLib.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\cmdproc.dir\build.make CMakeFiles/cmdproc.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\cmdproc.dir\build.make CMakeFiles/cmdproc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" --progress-num=3,4 "Built target cmdproc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" --progress-num=5,6 "Built target cmdproc"
 .PHONY : CMakeFiles/cmdproc.dir/all
 
 # Build rule for subdir invocation for target.
@@ -123,13 +149,46 @@ cmdproc: CMakeFiles/cmdproc.dir/rule
 # codegen rule for target.
 CMakeFiles/cmdproc.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\cmdproc.dir\build.make CMakeFiles/cmdproc.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" --progress-num=3,4 "Finished codegen for target cmdproc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" --progress-num=5,6 "Finished codegen for target cmdproc"
 .PHONY : CMakeFiles/cmdproc.dir/codegen
 
 # clean rule for target.
 CMakeFiles/cmdproc.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\cmdproc.dir\build.make CMakeFiles/cmdproc.dir/clean
 .PHONY : CMakeFiles/cmdproc.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/runTests.dir
+
+# All Build rule for target.
+CMakeFiles/runTests.dir/all: CmdProc/CMakeFiles/CmdProcLib.dir/all
+CMakeFiles/runTests.dir/all: Unity/CMakeFiles/UnityLib.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\runTests.dir\build.make CMakeFiles/runTests.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\runTests.dir\build.make CMakeFiles/runTests.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" --progress-num=7,8 "Built target runTests"
+.PHONY : CMakeFiles/runTests.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/runTests.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" 6
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/runTests.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" 0
+.PHONY : CMakeFiles/runTests.dir/rule
+
+# Convenience name for target.
+runTests: CMakeFiles/runTests.dir/rule
+.PHONY : runTests
+
+# codegen rule for target.
+CMakeFiles/runTests.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\runTests.dir\build.make CMakeFiles/runTests.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" --progress-num=7,8 "Finished codegen for target runTests"
+.PHONY : CMakeFiles/runTests.dir/codegen
+
+# clean rule for target.
+CMakeFiles/runTests.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\runTests.dir\build.make CMakeFiles/runTests.dir/clean
+.PHONY : CMakeFiles/runTests.dir/clean
 
 #=============================================================================
 # Target rules for target CmdProc/CMakeFiles/CmdProcLib.dir
@@ -162,6 +221,38 @@ CmdProc/CMakeFiles/CmdProcLib.dir/codegen:
 CmdProc/CMakeFiles/CmdProcLib.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CmdProc\CMakeFiles\CmdProcLib.dir\build.make CmdProc/CMakeFiles/CmdProcLib.dir/clean
 .PHONY : CmdProc/CMakeFiles/CmdProcLib.dir/clean
+
+#=============================================================================
+# Target rules for target Unity/CMakeFiles/UnityLib.dir
+
+# All Build rule for target.
+Unity/CMakeFiles/UnityLib.dir/all:
+	$(MAKE) $(MAKESILENT) -f Unity\CMakeFiles\UnityLib.dir\build.make Unity/CMakeFiles/UnityLib.dir/depend
+	$(MAKE) $(MAKESILENT) -f Unity\CMakeFiles\UnityLib.dir\build.make Unity/CMakeFiles/UnityLib.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" --progress-num=3,4 "Built target UnityLib"
+.PHONY : Unity/CMakeFiles/UnityLib.dir/all
+
+# Build rule for subdir invocation for target.
+Unity/CMakeFiles/UnityLib.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Unity/CMakeFiles/UnityLib.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" 0
+.PHONY : Unity/CMakeFiles/UnityLib.dir/rule
+
+# Convenience name for target.
+UnityLib: Unity/CMakeFiles/UnityLib.dir/rule
+.PHONY : UnityLib
+
+# codegen rule for target.
+Unity/CMakeFiles/UnityLib.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f Unity\CMakeFiles\UnityLib.dir\build.make Unity/CMakeFiles/UnityLib.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\5g FER\embedded\Assignment2\SETR_Assignment2\build\CMakeFiles" --progress-num=3,4 "Finished codegen for target UnityLib"
+.PHONY : Unity/CMakeFiles/UnityLib.dir/codegen
+
+# clean rule for target.
+Unity/CMakeFiles/UnityLib.dir/clean:
+	$(MAKE) $(MAKESILENT) -f Unity\CMakeFiles\UnityLib.dir\build.make Unity/CMakeFiles/UnityLib.dir/clean
+.PHONY : Unity/CMakeFiles/UnityLib.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
