@@ -163,6 +163,30 @@ void test_checkCommand_A_ShouldReportCorrectValue(void) {
     TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest1, 17)); // memcmp returns 0 if strings are equal
 }
 
+void test_checkCommand_P_ShouldReportCorrectValue(void) {
+    printf("%s\n", UARTTxBuffer);
+    resetRxBuffer();
+    resetTxBuffer();
+    rxChar('#');
+	rxChar('P');
+	rxChar('t'); 
+	rxChar('1');
+	rxChar('9');
+	rxChar('6');
+	rxChar('!');
+    TEST_ASSERT_EQUAL(CMD_OK, cmdProcessor());
+
+    int len;
+	unsigned char ans[30];
+    getTxBuffer(ans,&len);
+    unsigned char ansTest1[]={'#','p','t', '+', '1', '1', '!','\0'};
+
+    printf("Evo banke: %s\n",ans);
+    printf("Evo banke: %s\n",ansTest1);
+
+    TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest1, 17)); // memcmp returns 0 if strings are equal
+}
+
 // RUN TESTS
 int main(void) {
     UNITY_BEGIN();
@@ -182,5 +206,6 @@ int main(void) {
     RUN_TEST(test_checkCommand_ShouldReportWrongCommandWithCorrectChecksum);
     RUN_TEST(test_checkCommand_ShouldReportInvalidFormatOfFrame);
     RUN_TEST(test_checkCommand_A_ShouldReportCorrectValue);
+	RUN_TEST(test_checkCommand_P_ShouldReportCorrectValue);
     return UNITY_END();
 }
