@@ -187,6 +187,17 @@ void test_checkCommand_P_ShouldReportCorrectValue(void) {
     TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest1, 17)); // memcmp returns 0 if strings are equal
 }
 
+void test_checkCommand_P_ShouldReportCorrectValue(void) {
+    printf("%s\n", UARTTxBuffer);
+    resetRxBuffer();
+    resetTxBuffer();
+    rxChar('#');
+	rxChar('L');
+	rxChar('!');
+    TEST_ASSERT_EQUAL(CMD_OK, cmdProcessor());
+
+}
+
 // RUN TESTS
 int main(void) {
     UNITY_BEGIN();
