@@ -144,7 +144,7 @@ int cmdProcessor(void)
 				/* Check sensor type */
 				sid = UARTRxBuffer[sofIndex+2];
 				if(sid != 't' && sid != 'h' && sid != 'c') {
-					return -2;
+					return CMD_INVALID;
 				} 
 				printf("%c", sid);
 
@@ -199,8 +199,32 @@ int cmdProcessor(void)
 				return CMD_OK;
 			case 'L': // send back latest 20 results from history
 				// TO DO
+
+				unsigned char historyChar[20];
+
+				sid = UARTRxBuffer[sofIndex+2];
+				if(sid != 't' && sid != 'h' && sid != 'c') {
+					return CMD_INVALID;
+				} 
+
+				if(sid == 't'){
+					// loop that goes in history and sends the last 20 results, big history size no need for circular buffer going
+					//store in historyChar
+				} else if(sid == 'h'){
+					// loop that goes in history and sends the last 20 results, big history size no need for circular buffer going
+				} else if(sid == 'c'){
+					// loop that goes in history and sends the last 20 results, big history size no need for circular buffer going
+				} 
+
 				txChar('#');
 				txChar('l');
+				txChar(sid);
+
+				// send one by one the last 20 results
+				for(int i = 0; i < 20 /* one value is 3 or 5 chars depends on mesaurement */; i++) {
+					txChar(historyChar[i]);
+				}
+
 				/* Send checksum */
 				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer + 1, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
 				for(int i = 0; i < CS_DIGITS; i++) {
