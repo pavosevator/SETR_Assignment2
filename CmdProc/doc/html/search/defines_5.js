@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['t_5fdigits_0',['T_DIGITS',['../cmdproc_8h.html#ad811f81994bebf5304716394d2a8945a',1,'cmdproc.h']]]
+  ['sof_5fsym_0',['SOF_SYM',['../cmdproc_8h.html#a98ce42a3f4332d00581da3291c9865cb',1,'cmdproc.h']]]
 ];

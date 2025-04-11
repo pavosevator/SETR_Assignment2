@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sof_5fsym_0',['SOF_SYM',['../cmdproc_8h.html#a98ce42a3f4332d00581da3291c9865cb',1,'cmdproc.h']]]
+  ['rx_5fcmd_5fa_5flen_0',['RX_CMD_A_LEN',['../cmdproc_8h.html#a1cfeaf6a2c6628885818d80b06583e73',1,'cmdproc.h']]]
 ];

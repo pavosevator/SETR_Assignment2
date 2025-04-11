@@ -1,3 +1,13 @@
+/**
+ * @file cmdproc.c
+ * @brief Source file for command processor module for smart sensor node.
+ *
+ * This module processes commands received via UART for a smart sensor node
+ * that measures temperature, relative humidity, and CO2 levels. 
+ * 
+ * @author  Ivan PAVOSEVIC, Enzo DOS SANTOS.
+ * @date 08 Apr 2025
+ */
 #include "cmdproc.h"
 
 /* Internal variables */
@@ -451,17 +461,17 @@ int addInHistory(void *measuredValue, char sensorType)
         case 't': // Temperature
             tHistory[tHistoryLen] = *(signed char *)measuredValue; // Cast to signed char
             tHistoryLen = (tHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
-            return 0;
+            return CMD_OK;
 
         case 'h': // Humidity
             hHistory[hHistoryLen] = *(unsigned char *)measuredValue; // Cast to unsigned char
             hHistoryLen = (hHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
-            return 0;
+            return CMD_OK;
 
         case 'c': // CO2
             cHistory[cHistoryLen] = *(unsigned int *)measuredValue; // Cast to unsigned int
             cHistoryLen = (cHistoryLen + 1) % HISTORY_SIZE; // Move to the next position in a circular manner
-            return 0;
+            return CMD_OK;
 
         default:
             // Invalid sensor type
