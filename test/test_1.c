@@ -141,9 +141,7 @@ void test_checkCommand_ShouldReportInvalidFormatOfFrame(void) {
 
 // Test command A if it outputs right results
 void test_checkCommand_A_ShouldReportCorrectValue(void) {
-    printf("%s\n", UARTTxBuffer);
-    resetRxBuffer();
-    resetTxBuffer();
+    seed = 1;
     rxChar('#');
     rxChar('A');
     rxChar('0');
@@ -156,9 +154,6 @@ void test_checkCommand_A_ShouldReportCorrectValue(void) {
 	unsigned char ans[30];
     getTxBuffer(ans,&len);
     unsigned char ansTest1[]={'#','a','t', '+', '1', '1', 'h', '0', '8','3', 'c','0','0','9','9','5', '2', '0','7', '!','\0'};
-
-    printf("Evo banke: %s\n",ans);
-    printf("Evo banke: %s\n",ansTest1);
 
     TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest1, len)); // memcmp returns 0 if strings are equal
 }
@@ -179,21 +174,76 @@ void test_checkCommand_P_ShouldReportCorrectValue(void) {
     getTxBuffer(ans,&len);
     unsigned char ansTest2[]={'#','p','t', '+', '1', '1', '1', '1', '3', '!','\0'};
 
-    printf("Evo banke: %s\n",ans);
-    printf("Evo banke: %s\n",ansTest2);
-
     TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest2, len)); // memcmp returns 0 if strings are equal
 }
 
-void test_checkCommand_L(void) { // this command should be implemented
-    printf("%s\n", UARTTxBuffer);
-    resetRxBuffer();
-    resetTxBuffer();
+// Test if command L is working
+void test_checkCommand_Lt_ShouldReportCorrectValue(void) { 
+    seed = 1;
+    rxChar('#');
+	rxChar('L');
+    rxChar('t');
+    rxChar('1');
+    rxChar('9');
+    rxChar('2');
+	rxChar('!');
+    TEST_ASSERT_EQUAL(CMD_OK, cmdProcessor());
+
+}
+// Test if command L is working
+void test_checkCommand_Lh_ShouldReportCorrectValue(void) { 
+    seed = 1;
+    rxChar('#');
+	rxChar('L');
+    rxChar('h');
+    rxChar('1');
+    rxChar('8');
+    rxChar('0');
+	rxChar('!');
+    TEST_ASSERT_EQUAL(CMD_OK, cmdProcessor());
+
+}
+// Test if command L is working
+void test_checkCommand_Lc_ShouldReportCorrectValue(void) { 
+    seed = 1;
     rxChar('#');
 	rxChar('L');
     rxChar('c');
+    rxChar('1');
+    rxChar('7');
+    rxChar('5');
 	rxChar('!');
     TEST_ASSERT_EQUAL(CMD_OK, cmdProcessor());
+
+}
+
+// Test if command R is working
+void test_checkCommand_R_ShouldReportCorrectValue(void) { 
+    
+    rxChar('#');
+	rxChar('P');
+    rxChar('t');
+    rxChar('1');
+    rxChar('9');
+    rxChar('6');
+	rxChar('!');
+    TEST_ASSERT_EQUAL(CMD_OK, cmdProcessor());
+
+    resetTxBuffer();
+    rxChar('#');
+    rxChar('R');
+    rxChar('0');
+    rxChar('8');
+    rxChar('2');
+    rxChar('!');
+
+    TEST_ASSERT_EQUAL(CMD_OK, cmdProcessor());
+    int len;
+	unsigned char ans[30];
+    getTxBuffer(ans,&len);
+    unsigned char ansTest3[]={'#','r','1', '1', '4', '!','\0'};
+
+    TEST_ASSERT_EQUAL(0, memcmp(ans, ansTest3, len)); // memcmp returns 0 if strings are equal
 
 }
 
@@ -217,6 +267,9 @@ int main(void) {
     RUN_TEST(test_checkCommand_ShouldReportInvalidFormatOfFrame);
     RUN_TEST(test_checkCommand_A_ShouldReportCorrectValue);
 	RUN_TEST(test_checkCommand_P_ShouldReportCorrectValue);
-    RUN_TEST(test_checkCommand_L);
+    RUN_TEST(test_checkCommand_Lt_ShouldReportCorrectValue);
+    RUN_TEST(test_checkCommand_Lh_ShouldReportCorrectValue);
+    RUN_TEST(test_checkCommand_Lc_ShouldReportCorrectValue);
+    RUN_TEST(test_checkCommand_R_ShouldReportCorrectValue);
     return UNITY_END();
 }

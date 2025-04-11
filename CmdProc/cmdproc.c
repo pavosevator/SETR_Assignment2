@@ -258,7 +258,7 @@ int cmdProcessor(void)
 				txChar('#');
 				txChar('r');
 				/* Send checksum */
-				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer + 1, strlen(UARTTxBuffer) + 2 )); // two because of 'p' and 'sid'
+				snprintf(checksumchar, CS_DIGITS + 1, "%03d", calcChecksum(UARTTxBuffer + 1, 1 )); // two because of 'p' and 'sid'
 				for(int i = 0; i < CS_DIGITS; i++) {
 					txChar(checksumchar[i]);
 				}

@@ -33,12 +33,14 @@ int main(void)
 	/* 1 - send the command */
 	//rxChar('x');
 	rxChar('#');
-	rxChar('A');
+	rxChar('R');
+	//rxChar('c');
 	rxChar('0');
-	rxChar('6');
-	rxChar('5');
+	rxChar('8');
+	rxChar('2');
 	rxChar('!');
 
+	printf("%s", UARTTxBuffer);
 			
 	/* 2 - Process the comand and check the answer */
 
