@@ -133,12 +133,12 @@ int main(void)
 	rxChar('5');
 	rxChar('!');
 
-	printf("\nAH MERAKA4: %s\n", UARTRxBuffer);
+	printf("\n Rx Buffer state: %s\n", UARTRxBuffer);
 
-	printf("\nALO BA: %d", cmdProcessor());
-	printf("\nALO BA2: %s", UARTTxBuffer);
+	printf("\nReturn value from cmdProcessor(): %d", cmdProcessor());
+	printf("\nTx BUffer State: %s", UARTTxBuffer);
 
-	printf("\nAH MERAKA5: %s\n", UARTRxBuffer);
+	printf("\nRx Buffer state 2: %s\n", UARTRxBuffer);
 
 	return 0;
 }

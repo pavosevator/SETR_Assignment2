@@ -126,6 +126,7 @@ int cmdProcessor(void)
 				// End of frame
 				txChar('!');
 
+				// Clean Rx buffer from the last command
 				frameLen = eofIndex - sofIndex + 1;
 				newLen = rxBufLen - frameLen;
 				
@@ -133,14 +134,7 @@ int cmdProcessor(void)
 				rxBufLen = newLen;
 
 				memset(UARTRxBuffer + newLen, '0', frameLen);
-				/*
-				for(int j = eofIndex; j <= rxBufLen; j++){
-					UARTRxBuffer[j - eofIndex - 1] = UARTRxBuffer[j];
-				}
-				*/
 
-				//printf("Leftover %d bytes: %s\n", rxBufLen, UARTRxBuffer);
-				//printf("Content of the message: %s\n", UARTTxBuffer);
 
 				return CMD_OK;
 
@@ -208,8 +202,6 @@ int cmdProcessor(void)
 
 				return CMD_OK;
 			case 'L': // send back latest 20 results from history
-				// TO DO
-
 				unsigned char historyChar[20];
 
 				sid = UARTRxBuffer[sofIndex+2];
@@ -288,6 +280,7 @@ int cmdProcessor(void)
 		
 		
 	}
+	// Checksum is wrong, delete data from buffer since its corrupted
 	frameLen = eofIndex - sofIndex + 1;
 	newLen = rxBufLen - frameLen;
 	memmove(UARTRxBuffer, UARTRxBuffer + frameLen, newLen);
