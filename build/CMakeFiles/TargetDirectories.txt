@@ -1,0 +1,13 @@
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CMakeFiles/cmdproc.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CMakeFiles/runTests.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CMakeFiles/test.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CMakeFiles/edit_cache.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CMakeFiles/rebuild_cache.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CmdProc/CMakeFiles/CmdProcLib.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CmdProc/CMakeFiles/test.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CmdProc/CMakeFiles/edit_cache.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/CmdProc/CMakeFiles/rebuild_cache.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/Unity/CMakeFiles/UnityLib.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/Unity/CMakeFiles/test.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/Unity/CMakeFiles/edit_cache.dir
+C:/5g FER/embedded/Assignment2/SETR_Assignment2/build/Unity/CMakeFiles/rebuild_cache.dir

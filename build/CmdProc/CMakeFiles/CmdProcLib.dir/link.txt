@@ -1,0 +1,2 @@
+C:\mingw64\bin\ar.exe qc libCmdProcLib.a CMakeFiles/CmdProcLib.dir/cmdproc.c.obj
+C:\mingw64\bin\ranlib.exe libCmdProcLib.a

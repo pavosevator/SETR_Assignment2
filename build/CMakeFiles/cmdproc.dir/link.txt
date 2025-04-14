@@ -1,0 +1,3 @@
+C:\mingw64\bin\cmake.exe -E rm -f CMakeFiles\cmdproc.dir/objects.a
+C:\mingw64\bin\ar.exe qc CMakeFiles\cmdproc.dir/objects.a @CMakeFiles\cmdproc.dir\objects1.rsp
+gcc -Wl,--whole-archive CMakeFiles\cmdproc.dir/objects.a -Wl,--no-whole-archive -o cmdproc.exe -Wl,--out-implib,libcmdproc.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\cmdproc.dir\linkLibs.rsp
